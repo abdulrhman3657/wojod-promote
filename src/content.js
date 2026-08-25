@@ -1,4 +1,4 @@
-export const ACCENT = '#8b5cf6';
+export const ACCENT = '#2b72ee';
 
 export const WAITLIST_ENDPOINT = import.meta.env.VITE_WAITLIST_ENDPOINT || '';
 
@@ -80,7 +80,6 @@ export const COUNTRIES = [
 
 export const T = {
   en: {
-    nav: { why: 'Why Wojood', offer: 'What We Offer', early: 'Early Access', coming: 'Coming Soon' },
     errors: {
       name: 'Please enter your name.',
       emailRequired: 'Please enter your email address.',
@@ -101,20 +100,6 @@ export const T = {
       desc2: "It's the first thing people see and the foundation of trust.",
       cta1: 'Get Early Access ',
       cta2: 'Explore WOJOD ↓',
-    },
-    why: {
-      heading1: 'Why do you need ',
-      heading2: 'Wojod',
-      heading3: '?',
-      closingWojod: '',
-      closingRest: '',
-      p1: 'Scattered tools. Multiple providers. Different ways of doing things.',
-      p2: 'They consume your time and effort, pulling your focus away from what matters.',
-      closing1: "You're building your business. ",
-      closingBreak: true,
-      closing2: "You shouldn't have to ",
-      closing3: 'piece it together',
-      closing4: '.',
     },
     offer: {
       heading1: 'Wojood. Your digital presence, in ',
@@ -169,7 +154,6 @@ export const T = {
     footer: { copyright: '© 2026 WOJOD Inc.', privacy: 'Privacy Policy', terms: 'Terms of Service', contact: 'Contact' },
   },
   ar: {
-    nav: { why: 'لماذا وجود', offer: 'ماذا نقدم', early: 'الوصول المبكر', coming: 'قريبًا' },
     errors: {
       name: 'يرجى إدخال اسمك.',
       emailRequired: 'يرجى إدخال بريدك الإلكتروني.',
@@ -190,20 +174,6 @@ export const T = {
       desc2: 'إنه أول ما يُرى عنك، وأول ما يُبنى عليه الانطباع والثقة.',
       cta1: 'سجّل اهتمامك مبكرًا',
       cta2: 'استكشف WOJOD ↓',
-    },
-    why: {
-      heading1: 'حضورك الرقمي يستحق أن يكون ',
-      heading2: 'أبسط',
-      heading3: '. ',
-      p1: 'نطاق، موقع، بريد، وخدمات متعددة. أساسيات مهمة، لكن تشتتها بين منصات ومزودين مختلفين يجعل بناء حضور متكامل أكثر تعقيدًا مما ينبغي.',
-      p2: '',
-      closing1: '',
-      closingWojod: 'WOJOD',
-      closingRest: ' يجمع لك الأساس في مكان واحد، لتبني حضورك الرقمي بثقة، ويكبر معك خطوة بخطوة.  ',
-      closingBreak: false,
-      closing2: '',
-      closing3: '',
-      closing4: '',
     },
     offer: {
       heading1: 'حضورك الرقمي، ',

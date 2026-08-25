@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   WAITLIST_ENDPOINT, COUNTRIES, SERVICES, SERVICE_ICONS,
-  BUSINESS_TYPES_EN, BUSINESS_TYPES_AR,
 } from './content.js';
 
 function ServiceIcon({ icon, color }) {
@@ -22,12 +21,10 @@ function ServiceIcon({ icon, color }) {
 
 export default function WaitlistForm({ lang, t, dir, textAlign }) {
   const isAr = lang === 'ar';
-  const businessTypes = isAr ? BUSINESS_TYPES_AR : BUSINESS_TYPES_EN;
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [businessType, setBusinessType] = useState('');
   const [selectedServices, setSelectedServices] = useState([]);
   const [country, setCountry] = useState(COUNTRIES[0]);
   const [status, setStatus] = useState('idle');
@@ -36,8 +33,6 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
   const [focusedField, setFocusedField] = useState('');
   const [countryOpen, setCountryOpen] = useState(false);
   const [countryQuery, setCountryQuery] = useState('');
-  const [businessOpen, setBusinessOpen] = useState(false);
-  const [businessQuery, setBusinessQuery] = useState('');
   const [submitError, setSubmitError] = useState('');
   const [modal, setModal] = useState(null);
 
@@ -48,9 +43,6 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
   const countryBtnRef = useRef(null);
   const countrySearchRef = useRef(null);
   const countryWrapRef = useRef(null);
-  const businessBtnRef = useRef(null);
-  const businessSearchRef = useRef(null);
-  const businessWrapRef = useRef(null);
 
   const sessionStart = useRef(Date.now());
   const utm = useRef({ source: '', campaign: '', referrer: '' });
@@ -68,7 +60,7 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
 
   // These live in refs so the document-level handlers see current values.
   const stateRef = useRef({});
-  stateRef.current = { countryOpen, businessOpen, modal };
+  stateRef.current = { countryOpen, modal };
 
   useEffect(() => {
     const onDocMouseDown = (e) => {
@@ -77,17 +69,11 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
         const onTrigger = countryBtnRef.current && countryBtnRef.current.contains(e.target);
         if (!insideMenu && !onTrigger) { setCountryOpen(false); setCountryQuery(''); }
       }
-      if (stateRef.current.businessOpen) {
-        const insideMenu = businessWrapRef.current && businessWrapRef.current.contains(e.target);
-        const onTrigger = businessBtnRef.current && businessBtnRef.current.contains(e.target);
-        if (!insideMenu && !onTrigger) { setBusinessOpen(false); setBusinessQuery(''); }
-      }
     };
     const onDocKeyDown = (e) => {
       if (e.key === 'Escape') {
         if (stateRef.current.modal) { closeModal(); return; }
         if (stateRef.current.countryOpen) closeCountryMenu(true);
-        if (stateRef.current.businessOpen) closeBusinessMenu(true);
       }
     };
     document.addEventListener('mousedown', onDocMouseDown);
@@ -121,7 +107,6 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
       }
       return '';
     }
-    if (key === 'businessType') return businessType ? '' : t.errors.businessType;
     if (key === 'services') return selectedServices.length > 0 ? '' : t.errors.services;
     return '';
   };
@@ -130,7 +115,6 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
     fullName: validateField('fullName'),
     email: validateField('email'),
     phone: validateField('phone'),
-    businessType: validateField('businessType'),
     services: validateField('services'),
   };
   const formComplete = Object.keys(errs).every((k) => !errs[k]);
@@ -139,20 +123,18 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
   const errName = shown('fullName');
   const errEmail = shown('email');
   const errPhone = shown('phone');
-  const errBusinessType = shown('businessType');
   const errServices = submitAttempted ? errs.services : '';
 
   const fieldVisualState = (key, errorVal) => {
     const focused = focusedField === key;
     if (errorVal) return { border: '1px solid #e0574a', boxShadow: 'none', bg: '#ffffff', icon: '#e0574a' };
-    if (focused) return { border: '1px solid #5b46d6', boxShadow: '0 0 0 3px rgba(91,70,214,0.12)', bg: '#fbfaff', icon: '#5b46d6' };
-    return { border: '1px solid rgba(20,18,43,0.12)', boxShadow: 'none', bg: '#ffffff', icon: '#9ca3af' };
+    if (focused) return { border: '1px solid #2456c8', boxShadow: '0 0 0 3px rgba(36, 86, 200,0.12)', bg: '#fafcff', icon: '#2456c8' };
+    return { border: '1px solid rgba(15, 23, 42,0.12)', boxShadow: 'none', bg: '#ffffff', icon: '#9ca3af' };
   };
 
   const nameVis = fieldVisualState('fullName', errName);
   const emailVis = fieldVisualState('email', errEmail);
   const phoneVis = fieldVisualState('phone', errPhone);
-  const businessVis = fieldVisualState('businessType', errBusinessType);
 
   const onFieldBlur = (field) => {
     setTouched((s) => ({ ...s, [field]: true }));
@@ -166,8 +148,6 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
       return opening;
     });
     setCountryQuery('');
-    setBusinessOpen(false);
-    setBusinessQuery('');
   };
 
   const closeCountryMenu = (refocus) => {
@@ -183,22 +163,7 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
     if (phoneRef.current) phoneRef.current.focus();
   };
 
-  const toggleBusinessOpen = () => {
-    setBusinessOpen((open) => {
-      const opening = !open;
-      if (opening) setTimeout(() => businessSearchRef.current && businessSearchRef.current.focus(), 50);
-      return opening;
-    });
-    setBusinessQuery('');
-    setCountryOpen(false);
-    setCountryQuery('');
-  };
 
-  const closeBusinessMenu = (refocus) => {
-    setBusinessOpen(false);
-    setBusinessQuery('');
-    if (refocus && businessBtnRef.current) businessBtnRef.current.focus();
-  };
 
   const closeModal = () => setModal(null);
 
@@ -206,12 +171,12 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
     e.preventDefault();
     if (status !== 'idle') return;
     setSubmitAttempted(true);
-    setTouched({ fullName: true, email: true, phone: true, businessType: true, services: true });
+    setTouched({ fullName: true, email: true, phone: true, services: true });
 
-    const order = ['fullName', 'email', 'phone', 'businessType', 'services'];
+    const order = ['fullName', 'email', 'phone', 'services'];
     const firstInvalid = order.find((k) => errs[k]);
     if (firstInvalid) {
-      const refMap = { fullName: nameRef, email: emailRef, phone: phoneRef, businessType: businessBtnRef, services: servicesRef };
+      const refMap = { fullName: nameRef, email: emailRef, phone: phoneRef, services: servicesRef };
       const el = refMap[firstInvalid] && refMap[firstInvalid].current;
       if (el && el.focus) el.focus();
       return;
@@ -228,7 +193,8 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
       fullName: fullName.trim(),
       email: email.trim().toLowerCase(),
       phone: '+' + country.dial + phone.replace(/\D/g, ''),
-      businessType,
+      // Sector field was removed from the form; the column stays in the sheet.
+      businessType: '',
       services: selectedServices.join(', '),
       language: isAr ? 'AR' : 'EN',
       sessionDuration: mm + ':' + ss,
@@ -265,11 +231,6 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
     return c.name.toLowerCase().includes(q) || c.dial.includes(q);
   });
 
-  const filteredBusinessKeys = Object.keys(businessTypes).filter((key) => {
-    const q = businessQuery.trim().toLowerCase();
-    if (!q) return true;
-    return businessTypes[key].toLowerCase().includes(q);
-  });
 
   const submitDisabled = status !== 'idle' || !formComplete;
   const ctaLabel = status === 'submitting'
@@ -278,8 +239,8 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
 
   const menuStyle = (open) => ({
     position: 'absolute', top: '100%', left: 0, right: 0, marginTop: 6,
-    background: '#ffffff', border: '1px solid rgba(20,18,43,0.12)', borderRadius: 12,
-    boxShadow: '0 20px 40px -12px rgba(20,18,43,0.25)', zIndex: 30,
+    background: '#ffffff', border: '1px solid rgba(15, 23, 42,0.12)', borderRadius: 12,
+    boxShadow: '0 20px 40px -12px rgba(15, 23, 42,0.25)', zIndex: 30,
     overflow: 'hidden', display: 'flex', flexDirection: 'column',
     opacity: open ? 1 : 0,
     transform: open ? 'translateY(0)' : 'translateY(-6px)',
@@ -296,41 +257,41 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
 
   return (
     <div data-r="waitlist-col" dir={dir} data-reveal="right" style={{ flex: '1 1 420px', minWidth: 300, maxWidth: 560, width: '100%', textAlign, opacity: 0, transform: 'translateX(28px)', transition: 'opacity 800ms cubic-bezier(0.16,1,0.3,1), transform 800ms cubic-bezier(0.16,1,0.3,1)' }}>
-      <form data-r="waitlist-form" onSubmit={handleSubmit} style={{ background: '#ffffff', borderRadius: 24, padding: 40, boxShadow: '0 30px 60px -12px rgba(91,70,214,0.18)' }}>
+      <form data-r="waitlist-form" onSubmit={handleSubmit} style={{ background: '#ffffff', borderRadius: 24, padding: 40, boxShadow: '0 30px 60px -12px rgba(36, 86, 200,0.18)' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em', color: '#14122b' }}>{t.early.formTitle}</div>
+          <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em', color: '#0f172a' }}>{t.early.formTitle}</div>
           <div style={{ marginTop: 8, fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 500, color: '#6b7280' }}>{t.early.formSubtitle}</div>
         </div>
 
         <label htmlFor="wj-name" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>{t.early.fullName}</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 24, background: nameVis.bg, border: nameVis.border, boxShadow: nameVis.boxShadow, borderRadius: 12, padding: '0 16px', transition: 'border-color 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out' }}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke={nameVis.icon} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'stroke 180ms ease-out' }}><path d="M20 21a8 8 0 1 0-16 0" /><circle cx="12" cy="7" r="4" /></svg>
-          <input id="wj-name" ref={nameRef} type="text" autoComplete="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} onFocus={() => setFocusedField('fullName')} onBlur={() => onFieldBlur('fullName')} aria-invalid={Boolean(errName)} aria-describedby="wj-name-err" placeholder={t.early.fullName} style={{ flex: 1, minWidth: 0, background: 'transparent', border: 'none', outline: 'none', color: '#14122b', fontFamily: "'Inter', sans-serif", fontSize: 15, padding: '15px 0', textAlign, caretColor: '#5b46d6' }} />
+          <input id="wj-name" ref={nameRef} type="text" autoComplete="name" required value={fullName} onChange={(e) => setFullName(e.target.value)} onFocus={() => setFocusedField('fullName')} onBlur={() => onFieldBlur('fullName')} aria-invalid={Boolean(errName)} aria-describedby="wj-name-err" placeholder={t.early.fullName} style={{ flex: 1, minWidth: 0, background: 'transparent', border: 'none', outline: 'none', color: '#0f172a', fontFamily: "'Inter', sans-serif", fontSize: 15, padding: '15px 0', textAlign, caretColor: '#2456c8' }} />
         </div>
         {errName && <div id="wj-name-err" role="alert" style={errStyle}>{errName}</div>}
 
         <label htmlFor="wj-email" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>{t.early.email}</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12, background: emailVis.bg, border: emailVis.border, boxShadow: emailVis.boxShadow, borderRadius: 12, padding: '0 16px', transition: 'border-color 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out' }}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke={emailVis.icon} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'stroke 180ms ease-out' }}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>
-          <input id="wj-email" ref={emailRef} type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setFocusedField('email')} onBlur={() => onFieldBlur('email')} aria-invalid={Boolean(errEmail)} aria-describedby="wj-email-err" placeholder={t.early.email} style={{ flex: 1, minWidth: 0, background: 'transparent', border: 'none', outline: 'none', color: '#14122b', fontFamily: "'Inter', sans-serif", fontSize: 15, padding: '15px 0', textAlign, caretColor: '#5b46d6' }} />
+          <input id="wj-email" ref={emailRef} type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => setFocusedField('email')} onBlur={() => onFieldBlur('email')} aria-invalid={Boolean(errEmail)} aria-describedby="wj-email-err" placeholder={t.early.email} style={{ flex: 1, minWidth: 0, background: 'transparent', border: 'none', outline: 'none', color: '#0f172a', fontFamily: "'Inter', sans-serif", fontSize: 15, padding: '15px 0', textAlign, caretColor: '#2456c8' }} />
         </div>
         {errEmail && <div id="wj-email-err" role="alert" style={errStyle}>{errEmail}</div>}
 
         <label htmlFor="wj-phone" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>{t.early.phone}</label>
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 10, marginTop: 12, background: phoneVis.bg, border: phoneVis.border, boxShadow: phoneVis.boxShadow, borderRadius: 12, padding: '0 16px', transition: 'border-color 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out' }}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke={phoneVis.icon} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'stroke 180ms ease-out' }}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
-          <button type="button" ref={countryBtnRef} onClick={toggleCountryOpen} aria-haspopup="listbox" aria-expanded={countryOpen} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: 14, color: '#14122b', padding: '15px 10px 15px 0', borderRight: '1px solid rgba(20,18,43,0.12)', flex: 'none' }}>
+          <button type="button" ref={countryBtnRef} onClick={toggleCountryOpen} aria-haspopup="listbox" aria-expanded={countryOpen} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: 14, color: '#0f172a', padding: '15px 10px 15px 0', borderRight: '1px solid rgba(15, 23, 42,0.12)', flex: 'none' }}>
             <span>{country.flag}</span>
             <span>+{country.dial}</span>
             <svg viewBox="0 0 24 24" width={12} height={12} fill="none" stroke="#9ca3af" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
           </button>
-          <input id="wj-phone" ref={phoneRef} type="tel" dir="ltr" autoComplete="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} onFocus={() => setFocusedField('phone')} onBlur={() => onFieldBlur('phone')} aria-invalid={Boolean(errPhone)} aria-describedby="wj-phone-err" placeholder={t.early.phone} style={{ flex: 1, minWidth: 0, background: 'transparent', border: 'none', outline: 'none', color: '#14122b', fontFamily: "'Inter', sans-serif", fontSize: 15, padding: '15px 0', textAlign: 'left', caretColor: '#5b46d6' }} />
+          <input id="wj-phone" ref={phoneRef} type="tel" dir="ltr" autoComplete="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} onFocus={() => setFocusedField('phone')} onBlur={() => onFieldBlur('phone')} aria-invalid={Boolean(errPhone)} aria-describedby="wj-phone-err" placeholder={t.early.phone} style={{ flex: 1, minWidth: 0, background: 'transparent', border: 'none', outline: 'none', color: '#0f172a', fontFamily: "'Inter', sans-serif", fontSize: 15, padding: '15px 0', textAlign: 'left', caretColor: '#2456c8' }} />
 
           <div ref={countryWrapRef} onKeyDown={(e) => { if (e.key === 'Escape') { e.preventDefault(); closeCountryMenu(true); } }} role="listbox" aria-hidden={!countryOpen} style={{ ...menuStyle(countryOpen), maxHeight: 260 }}>
-            <input ref={countrySearchRef} className="menu-search" type="text" value={countryQuery} onChange={(e) => setCountryQuery(e.target.value)} placeholder={t.countrySearchPlaceholder} style={{ margin: 10, padding: '10px 12px', border: '1px solid rgba(20,18,43,0.12)', borderRadius: 8, outline: 'none', fontFamily: "'Inter', sans-serif", fontSize: 14, textAlign, caretColor: '#5b46d6', transition: 'border-color 180ms ease-out' }} />
+            <input ref={countrySearchRef} className="menu-search" type="text" value={countryQuery} onChange={(e) => setCountryQuery(e.target.value)} placeholder={t.countrySearchPlaceholder} style={{ margin: 10, padding: '10px 12px', border: '1px solid rgba(15, 23, 42,0.12)', borderRadius: 8, outline: 'none', fontFamily: "'Inter', sans-serif", fontSize: 14, textAlign, caretColor: '#2456c8', transition: 'border-color 180ms ease-out' }} />
             <div style={{ overflowY: 'auto' }}>
               {filteredCountries.map((c) => (
-                <button key={c.code + c.dial} type="button" className="menu-option" onClick={() => selectCountry(c)} style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', background: 'transparent', border: 'none', padding: '10px 14px', cursor: 'pointer', textAlign, fontFamily: "'Inter', sans-serif", fontSize: 14, color: '#14122b' }}>
+                <button key={c.code + c.dial} type="button" className="menu-option" onClick={() => selectCountry(c)} style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', background: 'transparent', border: 'none', padding: '10px 14px', cursor: 'pointer', textAlign, fontFamily: "'Inter', sans-serif", fontSize: 14, color: '#0f172a' }}>
                   <span>{c.flag}</span>
                   <span style={{ flex: 1 }}>{c.name}</span>
                   <span style={{ color: '#9ca3af' }}>+{c.dial}</span>
@@ -341,48 +302,20 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
         </div>
         {errPhone && <div id="wj-phone-err" role="alert" style={errStyle}>{errPhone}</div>}
 
-        <div style={{ position: 'relative' }}>
-          <button type="button" id="wj-business" ref={businessBtnRef} onClick={toggleBusinessOpen} onFocus={() => setFocusedField('businessType')} onBlur={() => onFieldBlur('businessType')} aria-haspopup="listbox" aria-expanded={businessOpen} aria-invalid={Boolean(errBusinessType)} aria-describedby="wj-business-err" style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, marginTop: 10, background: businessVis.bg, border: businessVis.border, boxShadow: businessVis.boxShadow, borderRadius: 12, padding: '0 16px', cursor: 'pointer', transition: 'border-color 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out', boxSizing: 'border-box' }}>
-            <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke={businessVis.icon} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none', transition: 'stroke 180ms ease-out' }}><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg>
-            <span style={{ flex: 1, minWidth: 0, textAlign, color: businessType ? '#14122b' : '#9ca3af', fontFamily: "'Inter', sans-serif", fontSize: 15, padding: '15px 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {businessType ? businessTypes[businessType] : t.early.businessTypePlaceholder}
-            </span>
-            <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="#9ca3af" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none' }}><path d="m6 9 6 6 6-6" /></svg>
-          </button>
 
-          <div ref={businessWrapRef} onKeyDown={(e) => { if (e.key === 'Escape') { e.preventDefault(); closeBusinessMenu(true); } }} role="listbox" aria-hidden={!businessOpen} style={{ ...menuStyle(businessOpen), maxHeight: 280 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, margin: 10, padding: '0 10px', border: '1px solid rgba(20,18,43,0.12)', borderRadius: 8, transition: 'border-color 180ms ease-out' }}>
-              <svg viewBox="0 0 24 24" width={15} height={15} fill="none" stroke="#9ca3af" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ flex: 'none' }}><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-              <input ref={businessSearchRef} type="text" value={businessQuery} onChange={(e) => setBusinessQuery(e.target.value)} placeholder={t.businessSearchPlaceholder} style={{ flex: 1, minWidth: 0, padding: '10px 0', border: 'none', outline: 'none', background: 'transparent', fontFamily: "'Inter', sans-serif", fontSize: 14, textAlign, caretColor: '#5b46d6' }} />
-            </div>
-            <div style={{ overflowY: 'auto' }}>
-              {filteredBusinessKeys.length > 0 ? (
-                filteredBusinessKeys.map((key) => (
-                  <button key={key} type="button" className="menu-option" onClick={() => { setBusinessType(key); setBusinessOpen(false); setBusinessQuery(''); }} style={{ display: 'flex', alignItems: 'center', width: '100%', background: key === businessType ? 'rgba(91,70,214,0.08)' : 'transparent', border: 'none', padding: '12px 14px', cursor: 'pointer', textAlign, fontFamily: "'Inter', sans-serif", fontSize: 14, color: '#14122b', transition: 'background-color 150ms ease-out' }}>
-                    {businessTypes[key]}
-                  </button>
-                ))
-              ) : (
-                <div style={{ padding: '16px 14px', textAlign: 'center', fontFamily: "'Inter', sans-serif", fontSize: 13.5, color: '#9ca3af' }}>{t.businessNoResults}</div>
-              )}
-            </div>
-          </div>
-        </div>
-        {errBusinessType && <div id="wj-business-err" role="alert" style={errStyle}>{errBusinessType}</div>}
-
-        <div style={{ marginTop: 24, fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 600, color: '#14122b' }}>{t.early.servicesLabel}</div>
+        <div style={{ marginTop: 24, fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{t.early.servicesLabel}</div>
         <div style={{ marginTop: 2, fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#9ca3af' }}>{t.early.servicesSub}</div>
         <div ref={servicesRef} tabIndex={-1} role="group" aria-describedby="wj-services-err" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10, marginTop: 12 }}>
           {SERVICES.map((s) => {
             const active = selectedServices.includes(s.key);
-            const color = active ? '#5b46d6' : '#14122b';
+            const color = active ? '#2456c8' : '#0f172a';
             return (
               <button
                 key={s.key}
                 type="button"
                 onClick={() => setSelectedServices((prev) => prev.includes(s.key) ? prev.filter((k) => k !== s.key) : prev.concat(s.key))}
                 aria-pressed={active}
-                style={{ display: 'flex', alignItems: 'center', gap: 8, background: active ? 'rgba(91,70,214,0.1)' : '#ffffff', border: `1px solid ${active ? '#5b46d6' : 'rgba(20,18,43,0.12)'}`, borderRadius: 10, padding: '12px 14px', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: 14, color, transition: 'background-color 180ms ease-out, border-color 180ms ease-out, color 180ms ease-out' }}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, background: active ? 'rgba(36, 86, 200,0.1)' : '#ffffff', border: `1px solid ${active ? '#2456c8' : 'rgba(15, 23, 42,0.12)'}`, borderRadius: 10, padding: '12px 14px', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: 14, color, transition: 'background-color 180ms ease-out, border-color 180ms ease-out, color 180ms ease-out' }}
               >
                 <ServiceIcon icon={SERVICE_ICONS[s.key]} color={color} />
                 {t.early.services[s.key]}
@@ -392,8 +325,10 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
         </div>
         {errServices && <div id="wj-services-err" role="alert" style={errStyle}>{errServices}</div>}
 
-        <button type="submit" className="grad-btn" disabled={submitDisabled} aria-disabled={submitDisabled} style={{ width: '100%', marginTop: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#ffffff', background: 'linear-gradient(90deg, #6d5cd6, #5b46d6)', border: 'none', borderRadius: 12, padding: '17px 0', cursor: submitDisabled ? 'not-allowed' : 'pointer', opacity: !formComplete && status === 'idle' ? 0.5 : 1, pointerEvents: submitDisabled ? 'none' : 'auto', boxShadow: '0 12px 24px -6px rgba(91,70,214,0.5)', transition: 'opacity 200ms ease' }}>
-          {ctaLabel}<span aria-hidden="true">→</span>
+        <button type="submit" className="grad-btn" disabled={submitDisabled} aria-disabled={submitDisabled} aria-busy={status === 'submitting'} style={{ width: '100%', marginTop: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#ffffff', background: 'linear-gradient(90deg, #3567d8, #2456c8)', border: 'none', borderRadius: 12, padding: '17px 0', cursor: submitDisabled ? 'not-allowed' : 'pointer', opacity: !formComplete && status === 'idle' ? 0.5 : 1, pointerEvents: submitDisabled ? 'none' : 'auto', boxShadow: '0 12px 24px -6px rgba(36, 86, 200,0.5)', transition: 'opacity 200ms ease' }}>
+          {status === 'submitting' && <span className="wj-spinner" aria-hidden="true" />}
+          {ctaLabel}
+          {status !== 'submitting' && <span aria-hidden="true">→</span>}
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 16 }}>
@@ -403,12 +338,12 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
 
         {status === 'success' && (
           <div style={{ marginTop: 14, textAlign: 'center' }}>
-            <p style={{ margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#14122b' }}>{t.early.success}</p>
-            <p style={{ margin: '4px 0 0', fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#514f6b' }}>{t.early.successSub}</p>
+            <p style={{ margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{t.early.success}</p>
+            <p style={{ margin: '4px 0 0', fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#4a5568' }}>{t.early.successSub}</p>
           </div>
         )}
         {status === 'duplicate' && (
-          <p style={{ margin: '14px 0 0', textAlign: 'center', fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#514f6b' }}>{t.early.duplicate}</p>
+          <p style={{ margin: '14px 0 0', textAlign: 'center', fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#4a5568' }}>{t.early.duplicate}</p>
         )}
         {submitError && (
           <p role="alert" style={{ margin: '14px 0 0', textAlign: 'center', fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#d34a3f' }}>{submitError}</p>
@@ -417,7 +352,7 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
 
       {modal && (
         <div onClick={closeModal} style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'rgba(15,17,23,0.45)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)', animation: 'fadeIn 250ms ease-out both' }}>
-          <div data-r="modal-card" dir={dir} onClick={(e) => e.stopPropagation()} style={{ position: 'relative', width: '100%', maxWidth: 420, background: '#ffffff', border: '1px solid rgba(91,70,214,0.12)', borderRadius: 20, padding: '40px 32px', boxShadow: '0 30px 70px -12px rgba(91,70,214,0.28), 0 0 0 1px rgba(255,255,255,0.5)', textAlign: 'center', animation: 'fadeSlideUp 260ms ease-out both' }}>
+          <div data-r="modal-card" dir={dir} onClick={(e) => e.stopPropagation()} style={{ position: 'relative', width: '100%', maxWidth: 420, background: '#ffffff', border: '1px solid rgba(36, 86, 200,0.12)', borderRadius: 20, padding: '40px 32px', boxShadow: '0 30px 70px -12px rgba(36, 86, 200,0.28), 0 0 0 1px rgba(255,255,255,0.5)', textAlign: 'center', animation: 'fadeSlideUp 260ms ease-out both' }}>
             <button type="button" onClick={closeModal} aria-label="Close" style={{ position: 'absolute', top: 16, right: 16, background: 'transparent', border: 'none', cursor: 'pointer', padding: 6, color: '#9ca3af', display: 'flex' }}>
               <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
             </button>
@@ -428,20 +363,20 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
               </div>
             )}
             {modal === 'success' && (
-              <div style={{ width: 60, height: 60, margin: '0 auto', borderRadius: '50%', background: 'rgba(91,70,214,0.1)', boxShadow: '0 0 0 8px rgba(91,70,214,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg viewBox="0 0 24 24" width={28} height={28} fill="none" stroke="#5b46d6" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+              <div style={{ width: 60, height: 60, margin: '0 auto', borderRadius: '50%', background: 'rgba(36, 86, 200,0.1)', boxShadow: '0 0 0 8px rgba(36, 86, 200,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg viewBox="0 0 24 24" width={28} height={28} fill="none" stroke="#2456c8" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
               </div>
             )}
             {modal === 'duplicate' && (
-              <div style={{ width: 60, height: 60, margin: '0 auto', borderRadius: '50%', background: 'rgba(91,70,214,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg viewBox="0 0 24 24" width={28} height={28} fill="none" stroke="#5b46d6" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+              <div style={{ width: 60, height: 60, margin: '0 auto', borderRadius: '50%', background: 'rgba(36, 86, 200,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg viewBox="0 0 24 24" width={28} height={28} fill="none" stroke="#2456c8" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
               </div>
             )}
 
-            <h3 style={{ margin: '22px 0 0', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 21, fontWeight: 800, color: '#14122b' }}>{modalTitle}</h3>
+            <h3 style={{ margin: '22px 0 0', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 21, fontWeight: 800, color: '#0f172a' }}>{modalTitle}</h3>
             <p style={{ margin: '12px 0 0', fontFamily: "'Inter', sans-serif", fontSize: 14.5, lineHeight: 1.6, color: '#6b7280' }}>{modalBody}</p>
 
-            <button type="button" className="grad-btn" onClick={closeModal} style={{ width: '100%', marginTop: 26, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#ffffff', background: 'linear-gradient(90deg, #6d5cd6, #5b46d6)', border: 'none', borderRadius: 12, padding: '15px 0', cursor: 'pointer', transition: 'opacity 200ms ease' }}>
+            <button type="button" className="grad-btn" onClick={closeModal} style={{ width: '100%', marginTop: 26, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#ffffff', background: 'linear-gradient(90deg, #3567d8, #2456c8)', border: 'none', borderRadius: 12, padding: '15px 0', cursor: 'pointer', transition: 'opacity 200ms ease' }}>
               {modalBtn}
             </button>
           </div>

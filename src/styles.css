@@ -1,13 +1,16 @@
+/* scroll-behavior has to live on the scrolling element. It was on `body`, where
+   it does nothing for document scrolling, so every in-page anchor jumped. */
+html { scroll-behavior: smooth; }
+
 body {
   margin: 0;
   background: #ffffff;
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
-  scroll-behavior: smooth;
 }
 * { box-sizing: border-box; }
-a { color: #8b5cf6; text-decoration: none; }
-a:hover { color: #7c4ce0; }
+a { color: #2b72ee; text-decoration: none; }
+a:hover { color: #1f5fd8; }
 input, button, textarea { font-family: inherit; }
 
 @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
@@ -16,47 +19,106 @@ input, button, textarea { font-family: inherit; }
 @keyframes pixelDrift { 0% { opacity: 0; transform: translateX(0); } 15% { opacity: var(--maxop, 0.7); } 65% { opacity: calc(var(--maxop, 0.7) * 0.5); } 100% { opacity: 0; transform: translateX(var(--dist, -100px)); } }
 @keyframes gateFlow { 0% { opacity: 0; transform: translate(0, 0) scale(0.6); } 12% { opacity: var(--maxop, 0.7); transform: translate(calc(var(--dist, -140px) * 0.1), calc(var(--rise, -10px) * 0.1)) scale(1); } 70% { opacity: calc(var(--maxop, 0.7) * 0.45); } 100% { opacity: 0; transform: translate(var(--dist, -140px), var(--rise, -10px)) scale(0.85); } }
 
+@keyframes wjSpin { to { transform: rotate(360deg); } }
+/* Spinner shown in the submit button while the row is being written. */
+.wj-spinner {
+  width: 16px; height: 16px; flex: none;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: wjSpin 620ms linear infinite;
+}
+
+/* Honour the OS setting: no drifting particles, no reveal slides, no smooth
+   scroll retargeting for anyone who asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-r="particles"] { display: none !important; }
+}
+
 /* hover / focus states (ported from the design's style-hover / style-focus) */
 .nav-link:hover { color: #ffffff !important; }
 .nav-ghost-btn:hover { background: rgba(255, 255, 255, 0.1) !important; }
-.btn-accent:hover { background: #7c4ce0 !important; }
-.btn-accent:focus-visible { box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.5), 0 10px 15px -3px rgba(0, 0, 0, 0.35) !important; }
+.btn-accent:hover { background: #1f5fd8 !important; }
+.btn-accent:focus-visible { box-shadow: 0 0 0 3px rgba(43, 114, 238, 0.5), 0 10px 15px -3px rgba(0, 0, 0, 0.35) !important; }
 .btn-dark:hover { background: #1b2740 !important; }
 .btn-dark:focus-visible { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 10px 15px -3px rgba(0, 0, 0, 0.35) !important; }
-.menu-option:hover { background: rgba(91, 70, 214, 0.06) !important; }
+.menu-option:hover { background: rgba(36, 86, 200, 0.06) !important; }
 .grad-btn:hover { opacity: 0.92 !important; }
-.menu-search:focus { border-color: #5b46d6 !important; box-shadow: 0 0 0 3px rgba(91, 70, 214, 0.12); }
-.footer-link:hover { color: #14122b !important; }
+.menu-search:focus { border-color: #2456c8 !important; box-shadow: 0 0 0 3px rgba(36, 86, 200, 0.12); }
+.footer-link:hover { color: #0f172a !important; }
+
+/* Contrast pool behind the door, anchored to the door itself (not the viewport)
+   so it tracks the art at every width — the hero is max-width 1200 and centred,
+   so a viewport-percentage position drifts off the door on wide screens.
+   The video's bright sweep lands on the door side once the layout mirrors for
+   Arabic, which washed the glow out. z-index:-1 keeps it behind the headline and
+   CTAs, which paint in the layers above negative-z children. */
+/* Particle travel scales with the door: the emitter is only 38% of the door's
+   width, so a fixed pixel drift that reads well at 560px overshoots the frame
+   at 300px. --p-scale multiplies the unitless per-particle values in App.jsx. */
+[data-r="particles"] { --p-scale: 1px; }
+
+[data-r="door-backdrop"] {
+  display: block;
+  position: absolute;
+  inset: -58% -74%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 46% 44% at 50% 50%,
+    rgba(0, 2, 5, 0.95) 0%,
+    rgba(0, 2, 5, 0.8) 40%,
+    rgba(0, 2, 5, 0.42) 68%,
+    rgba(0, 2, 5, 0) 100%
+  );
+}
 
 @media (max-width: 1024px) {
   #top { min-height: 0 !important; }
-  [data-r="hero-video"] { top: 0 !important; left: 0 !important; right: auto !important; width: 100% !important; height: 100% !important; min-width: 100% !important; min-height: 100% !important; transform: none !important; object-fit: cover !important; }
-  [data-r="hero-inner"] { width: 100% !important; max-width: 100% !important; flex-direction: column !important; align-items: flex-start !important; min-height: 0 !important; height: auto !important; padding: 124px 24px 72px !important; gap: 36px !important; }
-  [data-r="hero-text"] { width: 100% !important; height: auto !important; }
-  [data-r="hero-h1"] { width: 100% !important; max-width: 100% !important; height: auto !important; font-size: clamp(34px, 6.6vw, 54px) !important; margin-top: 8px !important; }
+  [data-r="hero-inner"] { width: 100% !important; max-width: 100% !important; flex-direction: column !important; align-items: flex-start !important; height: auto !important; padding: 104px 24px 72px !important; gap: 32px !important; }
+  [data-r="hero-text"] { width: 100% !important; height: auto !important; min-height: 0 !important; flex: 0 0 auto !important; }
+  [data-r="hero-h1"] { width: 100% !important; max-width: 100% !important; height: auto !important; font-size: clamp(30px, 6.4vw, 46px) !important; }
+  [data-r="hero-logo"] { height: 26px !important; margin-bottom: 16px !important; }
   [data-r="hero-h1-text"] { width: auto !important; height: auto !important; }
-  [data-r="door-wrap"] { flex: 0 0 auto !important; width: 100% !important; height: auto !important; max-width: 440px !important; align-self: center !important; }
-  [data-r="door-img"] { width: 100% !important; height: auto !important; }
-  [data-r="particles"] { left: 8% !important; top: 24% !important; width: 60% !important; height: 44% !important; }
+  [data-r="particles"] { --p-scale: 0.66px; }
 
-  /* Mobile: the door image is a dark rectangle over the video — lighten blend
-     makes its black background merge with the video behind it. */
-  [data-r="door-img"] { mix-blend-mode: lighten; }
+  /* Stacked under the copy, so the optical-centre nudge would only add a gap. */
+  [data-r="door-wrap"] { flex: 0 0 auto !important; width: 100% !important; max-width: 360px !important; align-self: center !important; transform: none !important; }
 
-  /* Mobile: the cover background collides with the text — swap it for a plain
-     gradient and show the illustration as its own image below the text. */
-  #why-wojood { min-height: 0 !important; background: linear-gradient(160deg, #edecf9 0%, #f6f5fc 100%) !important; }
-  [data-r="why-overlay"] { display: none !important; }
-  [data-r="why-illus"] { display: block !important; width: calc(100% + 48px); margin: 4px -24px -60px; height: 360px; object-fit: cover; object-position: right bottom; }
-  [data-r="why-inner"] { height: auto !important; padding: 60px 24px !important; gap: 24px !important; flex-wrap: wrap !important; }
-  [data-r="why-text"] { height: auto !important; flex: 1 1 100% !important; max-width: 100% !important; }
-  [data-r="why-spacer"] { display: none !important; }
-  [data-r="why-closing"] { height: auto !important; margin: 24px 0 0 !important; }
+  /* The door art is alpha-baked (door-of-light-alpha.png: alpha = luminance), so
+     its frame is genuinely transparent and never shows as a rectangle — the
+     artboards still do, because their PNG is opaque and `mix-blend-mode` cannot
+     fix it: [data-r="hero-inner"] has z-index:10 and that stacking context
+     isolates the blend from the video. What the art still needs on small screens
+     is something dark to glow against; z-index:-1 keeps the headline and CTAs,
+     which paint above negative-z children, fully lit. */
+  [data-r="door-backdrop"] {
+    display: block;
+    position: absolute;
+    inset: -22% -100vw -70%;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 2, 5, 0) 0%,
+      rgba(0, 2, 5, 0.62) 24%,
+      rgba(0, 2, 5, 0.9) 48%,
+      #000205 70%,
+      #000205 100%
+    );
+  }
 
-  #what-we-offer { padding: 68px 20px !important; }
-  [data-r="offer-inner"] { height: auto !important; top: 0 !important; margin-top: 0 !important; margin-bottom: 0 !important; }
+  #what-we-offer { padding: 72px 20px !important; }
+  [data-r="offer-inner"] { height: auto !important; top: 0 !important; margin: 0 !important; }
 
-  #early-access { padding: 68px 20px 0 !important; min-height: 0 !important; }
+  #early-access { padding: 72px 20px 0 !important; min-height: 0 !important; }
   [data-r="early-inner"] { flex-direction: column !important; gap: 40px !important; padding-bottom: 56px !important; }
   [data-r="early-left"] { flex: 1 1 100% !important; max-width: 100% !important; min-width: 0 !important; }
   [data-r="early-h2"] { margin-top: 0 !important; margin-bottom: 20px !important; max-width: 100% !important; }
@@ -68,21 +130,29 @@ input, button, textarea { font-family: inherit; }
 }
 
 @media (max-width: 640px) {
-  [data-r="hero-inner"] { padding: 104px 20px 56px !important; gap: 28px !important; }
-  [data-r="hero-h1"] { font-size: clamp(29px, 8.4vw, 40px) !important; }
-  [data-r="hero-h1"] img { height: 32px !important; width: auto !important; max-width: 104px !important; padding: 0 6px !important; }
+  /* Matches the mobile artboard: 20px gutters, 300px door under the CTAs. */
+  [data-r="hero-inner"] { padding: 96px 20px 56px !important; gap: 28px !important; }
+  [data-r="hero-h1"] { font-size: clamp(28px, 8.6vw, 34px) !important; }
   [data-r="hero-desc"] { font-size: 16px !important; }
+  [data-r="hero-logo"] { height: 22px !important; margin-bottom: 14px !important; }
   [data-r="hero-cta"] { gap: 10px !important; }
-  [data-r="hero-cta"] a { flex: 1 1 100% !important; justify-content: center !important; padding: 15px 20px !important; }
+  [data-r="hero-cta"] a { flex: 1 1 100% !important; justify-content: center !important; padding: 16px 20px !important; }
   [data-r="door-wrap"] { max-width: 300px !important; }
-  [data-r="particles"] { display: none !important; }
+  [data-r="particles"] { --p-scale: 0.5px; }
+  [data-r="early-dots"] { width: 150px !important; height: 150px !important; right: -40px !important; }
 
-  [data-r="why-inner"] { padding: 48px 20px !important; }
-  [data-r="why-illus"] { width: calc(100% + 40px); margin: 4px -20px -48px; height: 300px; }
+  /* Artboard shows the six pillars as a 2-column grid, dividers dropped. */
+  [data-r="pillar-row"] { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 28px 12px !important; justify-content: stretch !important; }
+  [data-r="pillar-item"] { width: auto !important; }
+  [data-r="pillar-divider"] { display: none !important; }
+
+  /* Benefits stay 3-up, as drawn. */
   [data-r="benefit-divider"] { display: none !important; }
-  [data-r="benefit-item"] { width: 45% !important; padding: 0 !important; gap: 10px !important; }
+  [data-r="benefits"] { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 14px 6px !important; justify-content: stretch !important; }
+  [data-r="benefit-item"] { width: auto !important; padding: 0 !important; gap: 10px !important; }
   [data-r="benefit-item"] svg { width: 32px !important; height: 32px !important; }
   [data-r="benefit-item"] div { white-space: normal !important; width: auto !important; font-size: 14px !important; }
+
   [data-r="waitlist-form"] { padding: 24px 18px !important; border-radius: 18px !important; }
   [data-r="modal-card"] { padding: 32px 22px !important; }
   [data-r="footer-bar"] { gap: 16px !important; }
