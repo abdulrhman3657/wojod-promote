@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   WAITLIST_ENDPOINT, COUNTRIES, SERVICES, SERVICE_ICONS,
 } from './content.js';
+import { trackEvent } from './analytics.js';
 
 function ServiceIcon({ icon, color }) {
   return (
@@ -218,11 +219,20 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.status === 'duplicate') { setStatus('duplicate'); setModal('duplicate'); }
-        else if (data.status === 'success') { setStatus('success'); setModal('success'); }
-        else { setStatus('idle'); setSubmitError(t.early.genericError); setModal('error'); }
+        // Conversion tracking: categorical fields only, never name/email/phone.
+        const eventParams = {
+          language: payload.language,
+          business_type: businessType,
+          services_count: selectedServices.length,
+          country: country.code,
+          utm_source: payload.utmSource,
+          utm_campaign: payload.utmCampaign,
+        };
+        if (data.status === 'duplicate') { setStatus('duplicate'); setModal('duplicate'); trackEvent('waitlist_duplicate', eventParams); }
+        else if (data.status === 'success') { setStatus('success'); setModal('success'); trackEvent('waitlist_signup', eventParams); }
+        else { setStatus('idle'); setSubmitError(t.early.genericError); setModal('error'); trackEvent('waitlist_error', { ...eventParams, reason: 'backend' }); }
       })
-      .catch(() => { setStatus('idle'); setSubmitError(t.early.genericError); setModal('error'); });
+      .catch(() => { setStatus('idle'); setSubmitError(t.early.genericError); setModal('error'); trackEvent('waitlist_error', { reason: 'network', language: payload.language }); });
   };
 
   const filteredCountries = COUNTRIES.filter((c) => {

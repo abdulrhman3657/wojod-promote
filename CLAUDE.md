@@ -4,6 +4,7 @@ Bilingual (EN/AR, RTL-aware) promotional landing page for WOJOD with an
 early-access waitlist form. Vite + React, static deploy on Cloudflare Pages.
 
 - `src/content.js` — all EN/AR copy, country list, business types, waitlist endpoint const.
+<<<<<<< HEAD
 - `src/App.jsx` — page shell: nav (logo + language pill only; the nav row takes
   `dir` so the logo sits in the right corner for AR and the left for EN), hero (video + door image + particles), what-we-offer, early-access, footer. Three sections only: `#top`, `#what-we-offer`, `#early-access`. There is no mobile menu and no `#why-wojood` section — the Aug 2026 artboards dropped both.
 - `src/WaitlistForm.jsx` — waitlist form: name, email, phone (country dropdown),
@@ -11,6 +12,11 @@ early-access waitlist form. Vite + React, static deploy on Cloudflare Pages.
   business-type (sector) field was removed from the UI, but the payload still
   sends `businessType: ''` so the sheet's Business Type column stays aligned
   with existing rows — don't drop it from the payload.
+=======
+- `src/App.jsx` — page shell: nav, mobile menu, hero (video + door image + particles), why/offer sections, footer.
+- `src/WaitlistForm.jsx` — waitlist form, country & business-type dropdowns, validation, success/duplicate/error modals; fires `waitlist_signup` / `waitlist_duplicate` / `waitlist_error` GA events.
+- `src/analytics.js` — Google Analytics 4 loader (`initAnalytics`, `trackEvent`); active only when `VITE_GA_MEASUREMENT_ID` is set at build time. Production is served through the `www.wojod.sa` proxy in `wujod_app`, whose CSP must allow the GA hosts.
+>>>>>>> 7c0d501 (Add Google Analytics 4 with waitlist conversion events)
 - `src/styles.css` — keyframes, hover states, and the responsive `[data-r=...]` media-query overrides ported from the design.
 - `apps-script/Code.gs` — Google Apps Script backend (appends to Google Sheet, dedupes by email). Endpoint configured via `VITE_WAITLIST_ENDPOINT` env var.
 - `Lumina Landing Page (Standalone).html` — design export (source of truth for

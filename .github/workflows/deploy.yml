@@ -21,6 +21,7 @@ jobs:
       - run: npm run build
         env:
           VITE_WAITLIST_ENDPOINT: ${{ secrets.VITE_WAITLIST_ENDPOINT }}
+          VITE_GA_MEASUREMENT_ID: ${{ secrets.VITE_GA_MEASUREMENT_ID }}
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3

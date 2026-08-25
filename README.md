@@ -40,6 +40,30 @@ Referrer).
 If the endpoint is not configured, the form shows the error modal and logs a
 console warning — no submission is sent anywhere.
 
+## Google Analytics
+
+Page views and waitlist conversions are tracked with Google Analytics 4
+(`gtag.js`) via [`src/analytics.js`](src/analytics.js). It is enabled only
+when `VITE_GA_MEASUREMENT_ID` is set at build time; without it the site
+sends nothing (local dev included).
+
+1. In [Google Analytics](https://analytics.google.com): **Admin → Create
+   property** (or reuse one), then **Data Streams → Add stream → Web** with
+   URL `https://www.wojod.sa`. Copy the **Measurement ID** (`G-XXXXXXXXXX`).
+2. Add it as the GitHub Actions secret `VITE_GA_MEASUREMENT_ID` on this repo
+   (or `gh secret set VITE_GA_MEASUREMENT_ID`), then push or re-run the
+   deploy workflow. Locally, put it in `.env` to test.
+3. Production traffic reaches this page through the `www.wojod.sa` proxy in
+   the `wujod_app` repo; its waitlist Content-Security-Policy
+   (`src/lib/config/waitlist.ts`) already allows the Google Analytics hosts.
+
+Events sent (no personal data — categorical fields only): `waitlist_signup`,
+`waitlist_duplicate`, `waitlist_error`, each with `language`,
+`business_type`, `services_count`, `country`, `utm_source`, `utm_campaign`.
+Mark `waitlist_signup` as a key event in GA to see it as a conversion.
+Because the page is also reachable directly at `wojod-promote.pages.dev`,
+reports may show two hostnames; filter on `www.wojod.sa` if needed.
+
 ## Deploying
 
 **Every push to `main` deploys automatically** via GitHub Actions
@@ -52,6 +76,7 @@ Required GitHub Actions secrets (already configured on the repo):
 - `CLOUDFLARE_API_TOKEN` — API token with *Account → Cloudflare Pages → Edit*
 - `CLOUDFLARE_ACCOUNT_ID` — the Cloudflare account id
 - `VITE_WAITLIST_ENDPOINT` — the Apps Script `/exec` URL (injected at build time)
+- `VITE_GA_MEASUREMENT_ID` — Google Analytics 4 measurement id (optional; analytics off when unset)
 
 Manual deploy from a local machine still works too:
 
