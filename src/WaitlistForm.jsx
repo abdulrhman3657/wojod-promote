@@ -222,7 +222,6 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
         // Conversion tracking: categorical fields only, never name/email/phone.
         const eventParams = {
           language: payload.language,
-          business_type: businessType,
           services_count: selectedServices.length,
           country: country.code,
           utm_source: payload.utmSource,

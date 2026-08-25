@@ -59,7 +59,7 @@ sends nothing (local dev included).
 
 Events sent (no personal data — categorical fields only): `waitlist_signup`,
 `waitlist_duplicate`, `waitlist_error`, each with `language`,
-`business_type`, `services_count`, `country`, `utm_source`, `utm_campaign`.
+`services_count`, `country`, `utm_source`, `utm_campaign`.
 Mark `waitlist_signup` as a key event in GA to see it as a conversion.
 Because the page is also reachable directly at `wojod-promote.pages.dev`,
 reports may show two hostnames; filter on `www.wojod.sa` if needed.
