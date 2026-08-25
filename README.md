@@ -40,14 +40,20 @@ Referrer).
 If the endpoint is not configured, the form shows the error modal and logs a
 console warning — no submission is sent anywhere.
 
-## Deploying to Cloudflare Pages
+## Deploying
 
-- **Build command**: `npm run build`
-- **Output directory**: `dist`
-- **Environment variable**: `VITE_WAITLIST_ENDPOINT` = your Apps Script `/exec` URL
+**Every push to `main` deploys automatically** via GitHub Actions
+([.github/workflows/deploy.yml](.github/workflows/deploy.yml)): it builds the
+site and publishes `dist/` to the `wojod-promote` Cloudflare Pages project at
+https://wojod-promote.pages.dev.
 
-Either connect the git repository in the Cloudflare dashboard, or deploy
-directly from the CLI:
+Required GitHub Actions secrets (already configured on the repo):
+
+- `CLOUDFLARE_API_TOKEN` — API token with *Account → Cloudflare Pages → Edit*
+- `CLOUDFLARE_ACCOUNT_ID` — the Cloudflare account id
+- `VITE_WAITLIST_ENDPOINT` — the Apps Script `/exec` URL (injected at build time)
+
+Manual deploy from a local machine still works too:
 
 ```bash
 npm run build
