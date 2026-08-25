@@ -1,0 +1,89 @@
+body {
+  margin: 0;
+  background: #ffffff;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+* { box-sizing: border-box; }
+a { color: #8b5cf6; text-decoration: none; }
+a:hover { color: #7c4ce0; }
+input, button, textarea { font-family: inherit; }
+
+@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes heroImageIn { from { opacity: 0; transform: translateY(18px) scale(0.97); } to { opacity: 0.95; transform: translateY(0) scale(1); } }
+@keyframes pixelDrift { 0% { opacity: 0; transform: translateX(0); } 15% { opacity: var(--maxop, 0.7); } 65% { opacity: calc(var(--maxop, 0.7) * 0.5); } 100% { opacity: 0; transform: translateX(var(--dist, -100px)); } }
+@keyframes gateFlow { 0% { opacity: 0; transform: translate(0, 0) scale(0.6); } 12% { opacity: var(--maxop, 0.7); transform: translate(calc(var(--dist, -140px) * 0.1), calc(var(--rise, -10px) * 0.1)) scale(1); } 70% { opacity: calc(var(--maxop, 0.7) * 0.45); } 100% { opacity: 0; transform: translate(var(--dist, -140px), var(--rise, -10px)) scale(0.85); } }
+
+/* hover / focus states (ported from the design's style-hover / style-focus) */
+.nav-link:hover { color: #ffffff !important; }
+.nav-ghost-btn:hover { background: rgba(255, 255, 255, 0.1) !important; }
+.btn-accent:hover { background: #7c4ce0 !important; }
+.btn-accent:focus-visible { box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.5), 0 10px 15px -3px rgba(0, 0, 0, 0.35) !important; }
+.btn-dark:hover { background: #1b2740 !important; }
+.btn-dark:focus-visible { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 10px 15px -3px rgba(0, 0, 0, 0.35) !important; }
+.menu-option:hover { background: rgba(91, 70, 214, 0.06) !important; }
+.grad-btn:hover { opacity: 0.92 !important; }
+.menu-search:focus { border-color: #5b46d6 !important; box-shadow: 0 0 0 3px rgba(91, 70, 214, 0.12); }
+.footer-link:hover { color: #14122b !important; }
+
+@media (max-width: 1024px) {
+  #top { min-height: 0 !important; }
+  [data-r="hero-video"] { top: 0 !important; left: 0 !important; right: auto !important; width: 100% !important; height: 100% !important; min-width: 100% !important; min-height: 100% !important; transform: none !important; object-fit: cover !important; }
+  [data-r="hero-inner"] { width: 100% !important; max-width: 100% !important; flex-direction: column !important; align-items: flex-start !important; min-height: 0 !important; height: auto !important; padding: 124px 24px 72px !important; gap: 36px !important; }
+  [data-r="hero-text"] { width: 100% !important; height: auto !important; }
+  [data-r="hero-h1"] { width: 100% !important; max-width: 100% !important; height: auto !important; font-size: clamp(34px, 6.6vw, 54px) !important; margin-top: 8px !important; }
+  [data-r="hero-h1-text"] { width: auto !important; height: auto !important; }
+  [data-r="door-wrap"] { flex: 0 0 auto !important; width: 100% !important; height: auto !important; max-width: 440px !important; align-self: center !important; }
+  [data-r="door-img"] { width: 100% !important; height: auto !important; }
+  [data-r="particles"] { left: 8% !important; top: 24% !important; width: 60% !important; height: 44% !important; }
+
+  /* Mobile: the door image is a dark rectangle over the video — lighten blend
+     makes its black background merge with the video behind it. */
+  [data-r="door-img"] { mix-blend-mode: lighten; }
+
+  /* Mobile: the cover background collides with the text — swap it for a plain
+     gradient and show the illustration as its own image below the text. */
+  #why-wojood { min-height: 0 !important; background: linear-gradient(160deg, #edecf9 0%, #f6f5fc 100%) !important; }
+  [data-r="why-overlay"] { display: none !important; }
+  [data-r="why-illus"] { display: block !important; width: calc(100% + 48px); margin: 4px -24px -60px; height: 360px; object-fit: cover; object-position: right bottom; }
+  [data-r="why-inner"] { height: auto !important; padding: 60px 24px !important; gap: 24px !important; flex-wrap: wrap !important; }
+  [data-r="why-text"] { height: auto !important; flex: 1 1 100% !important; max-width: 100% !important; }
+  [data-r="why-spacer"] { display: none !important; }
+  [data-r="why-closing"] { height: auto !important; margin: 24px 0 0 !important; }
+
+  #what-we-offer { padding: 68px 20px !important; }
+  [data-r="offer-inner"] { height: auto !important; top: 0 !important; margin-top: 0 !important; margin-bottom: 0 !important; }
+
+  #early-access { padding: 68px 20px 0 !important; min-height: 0 !important; }
+  [data-r="early-inner"] { flex-direction: column !important; gap: 40px !important; padding-bottom: 56px !important; }
+  [data-r="early-left"] { flex: 1 1 100% !important; max-width: 100% !important; min-width: 0 !important; }
+  [data-r="early-h2"] { margin-top: 0 !important; margin-bottom: 20px !important; max-width: 100% !important; }
+  [data-r="early-desc"] { margin: 0 0 28px !important; max-width: 100% !important; font-size: 17px !important; }
+  [data-r="benefits"] { margin: 32px 0 0 !important; gap: 12px !important; }
+  [data-r="waitlist-col"] { flex: 1 1 100% !important; max-width: 100% !important; min-width: 0 !important; }
+  [data-r="waitlist-form"] { padding: 30px 24px !important; }
+  [data-r="footer-bar"] { padding: 24px 20px !important; margin-top: 40px !important; }
+}
+
+@media (max-width: 640px) {
+  [data-r="hero-inner"] { padding: 104px 20px 56px !important; gap: 28px !important; }
+  [data-r="hero-h1"] { font-size: clamp(29px, 8.4vw, 40px) !important; }
+  [data-r="hero-h1"] img { height: 32px !important; width: auto !important; max-width: 104px !important; padding: 0 6px !important; }
+  [data-r="hero-desc"] { font-size: 16px !important; }
+  [data-r="hero-cta"] { gap: 10px !important; }
+  [data-r="hero-cta"] a { flex: 1 1 100% !important; justify-content: center !important; padding: 15px 20px !important; }
+  [data-r="door-wrap"] { max-width: 300px !important; }
+  [data-r="particles"] { display: none !important; }
+
+  [data-r="why-inner"] { padding: 48px 20px !important; }
+  [data-r="why-illus"] { width: calc(100% + 40px); margin: 4px -20px -48px; height: 300px; }
+  [data-r="benefit-divider"] { display: none !important; }
+  [data-r="benefit-item"] { width: 45% !important; padding: 0 !important; gap: 10px !important; }
+  [data-r="benefit-item"] svg { width: 32px !important; height: 32px !important; }
+  [data-r="benefit-item"] div { white-space: normal !important; width: auto !important; font-size: 14px !important; }
+  [data-r="waitlist-form"] { padding: 24px 18px !important; border-radius: 18px !important; }
+  [data-r="modal-card"] { padding: 32px 22px !important; }
+  [data-r="footer-bar"] { gap: 16px !important; }
+}
