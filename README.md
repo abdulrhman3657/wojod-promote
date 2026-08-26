@@ -40,6 +40,25 @@ Referrer).
 If the endpoint is not configured, the form shows the error modal and logs a
 console warning — no submission is sent anywhere.
 
+### Troubleshooting submissions
+
+Open the `/exec` URL in a browser. It opens the sheet, so it reports the real
+state rather than just "the script responds":
+
+- `{"status":"ok", ..., "rows": N}` — the backend is healthy; a failing form is
+  then a front-end or CSP problem (the `www.wojod.sa` proxy must keep
+  `script.google.com` and `script.googleusercontent.com` in `connect-src`).
+- `{"status":"error","message":"...permission to access the requested
+  document..."}` — the web app can no longer open the sheet. Fix in Apps Script:
+  **Deploy → Manage deployments → edit → Execute as: Me / Who has access:
+  Anyone**, re-run any function once to re-grant authorization, and if the
+  script is not bound to the sheet, add a `SPREADSHEET_ID` script property
+  (**Project Settings → Script Properties**) with the sheet's id. Editing the
+  existing deployment keeps the `/exec` URL; a *new* deployment changes it, and
+  `VITE_WAITLIST_ENDPOINT` must be updated in `.env` and in the GitHub secret.
+
+The browser console logs the backend's message whenever the error modal appears.
+
 ## Google Analytics
 
 Page views and waitlist conversions are tracked with Google Analytics 4

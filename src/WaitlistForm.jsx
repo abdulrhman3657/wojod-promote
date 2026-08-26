@@ -230,7 +230,13 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
         };
         if (data.status === 'duplicate') { setStatus('duplicate'); setModal('duplicate'); trackEvent('waitlist_duplicate', eventParams); }
         else if (data.status === 'success') { setStatus('success'); setModal('success'); trackEvent('waitlist_signup', eventParams); }
-        else { setStatus('idle'); setSubmitError(t.early.genericError); setModal('error'); trackEvent('waitlist_error', { ...eventParams, reason: 'backend' }); }
+        else {
+          // The backend's own message never reaches the user, but without it in
+          // the console a sheet/permission failure is indistinguishable from a
+          // network one.
+          console.error('WOJOD waitlist: backend rejected the submission —', data && data.message);
+          setStatus('idle'); setSubmitError(t.early.genericError); setModal('error'); trackEvent('waitlist_error', { ...eventParams, reason: 'backend' });
+        }
       })
       .catch(() => { setStatus('idle'); setSubmitError(t.early.genericError); setModal('error'); trackEvent('waitlist_error', { reason: 'network', language: payload.language }); });
   };

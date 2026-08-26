@@ -18,8 +18,32 @@
 
 var SHEET_NAME = 'Waitlist';
 
-function getSheet_() {
+/**
+ * The spreadsheet to write to.
+ *
+ * A container-bound script reaches its sheet through getActiveSpreadsheet(),
+ * but that binding breaks whenever the deployment is re-created with
+ * "Execute as: User accessing the web app", the script is detached from the
+ * sheet, or the executing account loses access — all of which surface as
+ * "You do not have permission to access the requested document" on the first
+ * write, while the health check and validation paths keep returning 200.
+ * Setting a SPREADSHEET_ID script property (Project Settings > Script
+ * Properties) pins the target explicitly and survives all three.
+ */
+function getSpreadsheet_() {
+  var id = PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');
+  if (id) return SpreadsheetApp.openById(id);
   var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    throw new Error(
+      'No bound spreadsheet. Set the SPREADSHEET_ID script property, or ' +
+      'redeploy this script from the sheet with "Execute as: Me".');
+  }
+  return ss;
+}
+
+function getSheet_() {
+  var ss = getSpreadsheet_();
   var sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_NAME);
@@ -93,6 +117,18 @@ function doPost(e) {
 }
 
 // Health check so opening the /exec URL in a browser shows the API is live.
+// It opens the sheet on purpose: a check that only proves the script responds
+// reports "ok" while every real submission fails on a permission error.
 function doGet() {
-  return jsonResponse_({ status: 'ok', service: 'wojod-waitlist' });
+  try {
+    var sheet = getSheet_();
+    return jsonResponse_({
+      status: 'ok',
+      service: 'wojod-waitlist',
+      sheet: SHEET_NAME,
+      rows: Math.max(0, sheet.getLastRow() - 1),
+    });
+  } catch (err) {
+    return jsonResponse_({ status: 'error', service: 'wojod-waitlist', message: String(err) });
+  }
 }
