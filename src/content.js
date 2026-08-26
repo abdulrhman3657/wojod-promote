@@ -2,38 +2,16 @@ export const ACCENT = '#2b72ee';
 
 export const WAITLIST_ENDPOINT = import.meta.env.VITE_WAITLIST_ENDPOINT || '';
 
-export const PILLAR_ICONS = {
-  identity: '<path d="M8 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M2 20c0-2.8 2.5-5 6-5s6 2.2 6 5"/><path d="M15 8a2.5 2.5 0 1 1 0-5"/><path d="M22 19c0-2.2-1.8-4-4.5-4"/>',
-  domain: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a13 13 0 0 1 0 18"/><path d="M12 3a13 13 0 0 0 0 18"/>',
-  website: '<rect x="3" y="4" width="18" height="15" rx="2"/><path d="M3 9h18"/><circle cx="6.5" cy="6.5" r="0.6" fill="currentColor" stroke="none"/>',
-  email: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
-  visibility: '<path d="M4 19h16"/><path d="M6 15l4-5 4 3 5-7"/><path d="M15 6h4v4"/>',
-  trust: '<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="m9.5 12 2 2 3.5-4"/>',
-};
-
-export const PILLARS = [
-  { key: 'identity' },
-  { key: 'domain' },
-  { key: 'website' },
-  { key: 'email' },
-  { key: 'visibility' },
-  { key: 'trust' },
-];
-
 export const SERVICE_ICONS = {
   email: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
   domain: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a13 13 0 0 1 0 18"/><path d="M12 3a13 13 0 0 0 0 18"/>',
   website: '<rect x="3" y="4" width="18" height="15" rx="2"/><path d="M3 9h18"/>',
-  hosting: '<rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r="0.6" fill="currentColor" stroke="none"/><circle cx="7" cy="17" r="0.6" fill="currentColor" stroke="none"/>',
-  other: '<circle cx="12" cy="12" r="9"/><circle cx="8" cy="12" r="0.8" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="0.8" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="0.8" fill="currentColor" stroke="none"/>',
 };
 
 export const SERVICES = [
   { key: 'email' },
   { key: 'domain' },
   { key: 'website' },
-  { key: 'hosting' },
-  { key: 'other' },
 ];
 
 export const COUNTRIES = [
@@ -78,6 +56,13 @@ export const COUNTRIES = [
   { code: 'BR', name: 'Brazil', dial: '55', flag: '🇧🇷' },
 ];
 
+// Early-access capacity. Update `taken` as sign-ups come in.
+export const SPOTS = { taken: 175, total: 1000 };
+
+// WhatsApp contact. Stored in international form (no +, no leading zero):
+// 0530482170 -> 966530482170. wa.me requires exactly this shape.
+export const WHATSAPP = '966530482170';
+
 export const T = {
   en: {
     errors: {
@@ -94,35 +79,40 @@ export const T = {
     businessSearchPlaceholder: 'Search business type',
     businessNoResults: 'No business types found',
     hero: {
-      eyebrow: '',
-      headline: 'Your partner for a digital presence.',
-      desc1: 'Your online presence is more than a domain.',
-      desc2: "It's the first thing people see and the foundation of trust.",
-      cta1: 'Get Early Access ',
-      cta2: 'Explore WOJOD ↓',
+      headline: 'Your digital presence starts here',
+      desc: 'Build and manage your online presence in one place, without the technical hassle',
+      cta1: 'Join the Waitlist',
+    },
+    problem: {
+      heading1: 'Why ',
+      heading2: 'Wojod',
+      heading3: '?',
+      body: 'Wojod is built around one goal: improving your digital presence and making it easy to manage as your business grows.',
     },
     offer: {
-      heading1: 'Wojood. Your digital presence, in ',
-      heading2: 'one place.',
-      desc: "More than a domain or a website. It's everything you need to show up, stand out, and grow — all in one place.",
-      pillars: {
-        identity: 'Digital Identity',
-        domain: 'Domain',
-        website: 'Website',
-        email: 'Professional Email',
-        visibility: 'Online Visibility',
-        trust: 'Trust & Security',
+      eyebrow: 'What we offer',
+      cards: {
+        domain: {
+          title: 'Domain',
+          body: 'Find and register the .sa domain your business will be known by',
+          alt: 'A .sa domain search bar',
+        },
+        email: {
+          title: 'Professional Email',
+          body: 'Get a professional email that matches your domain name',
+          alt: 'Gmail and Outlook app tiles',
+        },
+        landing: {
+          title: 'Live Landing Page',
+          body: 'Get a professional landing page live without the technical hassle',
+          alt: 'Landing page wireframe',
+        },
       },
     },
     early: {
-      headline1: 'Be part of ',
-      headline2: 'WOJOD.',
-      desc: "We're building a simpler way to create your digital presence. Join from the start, and be among the first to discover WOJOD and help shape it.",
-      priority: 'Early access',
-      updates: 'Priority experience',
-      voice: 'Your voice makes a difference',
-      formTitle: 'Join the waitlist',
-      formSubtitle: 'Be among the first to experience Wojood.',
+      headline: 'Join early access',
+      desc: 'Join Wojod waiting list and get a free live landing page with 1 month of hosting, early access, plus closer support from our team.',
+      spots: '{taken} of {total} spots taken',
       fullName: 'Full name',
       email: 'Email address',
       phone: 'Mobile number',
@@ -130,28 +120,27 @@ export const T = {
       businessTypePlaceholder: 'Select your business type',
       servicesLabel: 'What services are you interested in?',
       servicesSub: 'Select all that apply',
-      privacy: 'We respect your privacy. No spam, ever.',
       ctaIdle: 'Join the waitlist',
       ctaSubmitting: 'Joining...',
       ctaSuccess: "✓ You're in",
       success: "You're on the list.",
-      successSub: "We'll keep you updated when WOJOD is ready.",
+      successSub: "We'll keep you updated when Wojod is ready.",
       duplicate: "You're already on the list.",
       genericError: 'Something went wrong. Please try again.',
-      services: { email: 'Email', domain: 'Domain', website: 'Website', hosting: 'Hosting', other: 'Other' },
+      services: { email: 'Email', domain: 'Domain', website: 'Live landing page' },
       modal: {
         successTitle: "You're on the list",
-        successBody: "Your place has been reserved for early access to WOJOD. We'll be in touch when there's something worth sharing.",
+        successBody: "Your place has been reserved for early access to Wojod. We'll be in touch when there's something worth sharing.",
         successBtn: 'Got it ✓',
         duplicateTitle: "You're already on the list",
-        duplicateBody: 'Your interest has already been registered, and your place is reserved for early access to WOJOD.',
+        duplicateBody: 'Your interest has already been registered, and your place is reserved for early access to Wojod.',
         duplicateBtn: 'Got it ✓',
         errorTitle: 'Something went wrong',
         errorBody: "We couldn't complete your registration this time. Please try again.",
         errorBtn: 'Try again',
       },
     },
-    footer: { copyright: '© 2026 WOJOD Inc.', privacy: 'Privacy Policy', terms: 'Terms of Service', contact: 'Contact' },
+    footer: { contact: 'Contact us' },
   },
   ar: {
     errors: {
@@ -168,35 +157,40 @@ export const T = {
     businessSearchPlaceholder: 'ابحث عن نوع نشاطك',
     businessNoResults: 'لم نجد نوع نشاط مطابق',
     hero: {
-      eyebrow: 'وجود',
-      headline: 'شريكك لبناء حضور رقمي موثوق ينمو معك.',
-      desc1: 'وجودك على الإنترنت ليس مجرد عنوان.',
-      desc2: 'إنه أول ما يُرى عنك، وأول ما يُبنى عليه الانطباع والثقة.',
-      cta1: 'سجّل اهتمامك مبكرًا',
-      cta2: 'استكشف WOJOD ↓',
+      headline: 'وجودك الرقمي يبدأ هنا',
+      desc: 'وجود يساعدك في بناء وجودك الرقمي وإدارته بسهولة، بدون تعقيدات تقنية',
+      cta1: 'انضم إلى قائمة الانتظار',
+    },
+    problem: {
+      heading1: 'ليش ',
+      heading2: 'وجود',
+      heading3: '؟',
+      body: 'لأن سبب وجودنا بسيط: نأسس ونطوّر وجودك الرقمي ونخلي إدارته أسهل مع نمو مشروعك.',
     },
     offer: {
-      heading1: 'حضورك الرقمي، ',
-      heading2: 'في مكان واحد.',
-      desc: 'أكثر من نطاق أو موقع إلكتروني. كل ما تحتاجه لتظهر، وتتميز، وتنمو — في مكان واحد.',
-      pillars: {
-        identity: 'الهوية الرقمية',
-        domain: 'النطاق',
-        website: 'الموقع الإلكتروني',
-        email: 'البريد الاحترافي',
-        visibility: 'الظهور الرقمي',
-        trust: 'الثقة والأمان',
+      eyebrow: 'خدماتنا',
+      cards: {
+        domain: {
+          title: 'النطاق (الدومين)',
+          body: 'وجود يساعدك تختار النطاق المناسب لك ويسهّل عليك تسجيله',
+          alt: 'شريط البحث عن نطاق .sa',
+        },
+        email: {
+          title: 'البريد الإلكتروني',
+          body: 'بريد باسم نطاقك يعطي تواصلك شكل أكثر احترافية',
+          alt: 'أيقونات تطبيقات Gmail و Outlook',
+        },
+        landing: {
+          title: 'موقع تعريفي',
+          body: 'موقع يعرّف الناس على مشروعك، وتنشره بضغطة زر بدون أي تعقيد تقني',
+          alt: 'مخطط أولي لموقع تعريفي',
+        },
       },
     },
     early: {
-      headline1: 'كن جزءًا من ',
-      headline2: 'WOJOD.',
-      desc: 'نسعى لبناء طريقة أبسط لبناء حضورك الرقمي. انضم من البداية، وكن من أوائل من يكتشفون WOJOD ويشاركون في تشكيله.',
-      priority: 'وصول مبكر',
-      updates: 'أولوية التجربة',
-      voice: 'صوتك يصنع الفرق',
-      formTitle: 'انضم إلى قائمة الانتظار',
-      formSubtitle: 'كن من أوائل من يختبرون وجود.',
+      headline: 'احجز مكانك',
+      desc: 'سجّل في قائمة انتظار وجود وخذ موقع تعريفي لمشروعك مجانًا لأول شهر، مع وصول مبكر لخدمات النطاق والبريد الإلكتروني.',
+      spots: '{taken} من {total} مقعد محجوز',
       fullName: 'الاسم الكامل',
       email: 'البريد الإلكتروني',
       phone: 'رقم الجوال',
@@ -204,28 +198,27 @@ export const T = {
       businessTypePlaceholder: 'اختر نوع نشاطك',
       servicesLabel: 'ما الخدمات التي تهمك؟',
       servicesSub: 'اختر كل ما ينطبق عليك',
-      privacy: 'نحترم خصوصيتك. لا رسائل مزعجة.',
       ctaIdle: 'انضم إلى قائمة الانتظار',
       ctaSubmitting: 'جارٍ الانضمام...',
       ctaSuccess: '✓ تم الانضمام',
       success: 'تم تسجيل اهتمامك.',
-      successSub: 'سنوافيك بكل جديد عند اقتراب إطلاق WOJOD.',
+      successSub: 'سنوافيك بكل جديد عند اقتراب إطلاق Wojod.',
       duplicate: 'أنت مسجل بالفعل.',
       genericError: 'حدث خطأ. حاول مرة أخرى.',
-      services: { email: 'البريد الإلكتروني', domain: 'النطاق', website: 'الموقع الإلكتروني', hosting: 'الاستضافة', other: 'أخرى' },
+      services: { email: 'البريد الإلكتروني', domain: 'النطاق', website: 'موقع تعريفي' },
       modal: {
         successTitle: 'تم تسجيل اهتمامك',
-        successBody: 'تم حجز مكانك ضمن الوصول المبكر إلى WOJOD. سنكون على تواصل معك قريبًا بكل جديد.',
+        successBody: 'تم حجز مكانك ضمن الوصول المبكر إلى Wojod. سنكون على تواصل معك قريبًا بكل جديد.',
         successBtn: 'رائع، شكرًا لك',
         duplicateTitle: 'أنت مسجل بالفعل',
-        duplicateBody: 'تم تسجيل اهتمامك مسبقًا، ومكانك محفوظ ضمن الوصول المبكر إلى WOJOD.',
+        duplicateBody: 'تم تسجيل اهتمامك مسبقًا، ومكانك محفوظ ضمن الوصول المبكر إلى Wojod.',
         duplicateBtn: 'ممتاز ✓',
         errorTitle: 'لم نتمكن من تسجيل طلبك',
         errorBody: 'حدث خطأ بسيط أثناء التسجيل. حاول مرة أخرى، وسنكون بانتظارك.',
         errorBtn: 'حاول مرة أخرى',
       },
     },
-    footer: { copyright: '© 2026 وجود', privacy: 'سياسة الخصوصية', terms: 'شروط الخدمة', contact: 'تواصل معنا' },
+    footer: { contact: 'تواصل معنا' },
   },
 };
 

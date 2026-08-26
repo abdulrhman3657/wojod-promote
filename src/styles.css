@@ -42,17 +42,94 @@ input, button, textarea { font-family: inherit; }
   [data-r="particles"] { display: none !important; }
 }
 
+/* --- Services cards ------------------------------------------------------
+   Ported from the services-section export. Two colour changes from that file:
+   the heading accent uses our blue (ACCENT) instead of #5b46d6, and the card
+   shell / glass move off the export's purple-black (#0b0917, rgba(9,8,20,…))
+   onto a navy black, so the section matches the rest of the page. */
+.svc-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #080d1a;
+  box-shadow: 0 22px 48px -18px rgba(15, 23, 42, 0.32);
+}
+.svc-card-backdrop {
+  position: absolute;
+  left: -10%; top: -10%;
+  width: 120%; height: 120%;
+  object-fit: cover;
+  filter: blur(34px) saturate(135%);
+  opacity: 0.9;
+  z-index: 0;
+}
+.svc-card-img { position: relative; z-index: 1; width: 100%; aspect-ratio: 18 / 25; overflow: hidden; }
+.svc-card-img img { width: 100%; height: 100%; display: block; }
+.svc-card-img.cover img { object-fit: cover; }
+.svc-card-img.cover { transform: scale(1.04); } /* overscan hides the art's baked-in borders */
+.svc-card-img.contain img { object-fit: contain; }
+
+.svc-card-glass {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  padding: 22px 22px 26px;
+  background: linear-gradient(180deg, rgba(8, 13, 26, 0.78) 0%, rgba(8, 13, 26, 0.88) 100%);
+  backdrop-filter: blur(26px) saturate(120%);
+  -webkit-backdrop-filter: blur(26px) saturate(120%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+/* Soft fade so the glass dissolves into the art instead of cutting it. */
+.svc-card-glass::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: -44px;
+  height: 44px;
+  background: linear-gradient(180deg, rgba(8, 13, 26, 0) 0%, rgba(8, 13, 26, 0.78) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 100%);
+}
+.svc-card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: -0.01em; color: #ffffff; }
+.svc-card-body { margin-top: 5px; min-height: 38px; font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.45; color: rgba(255, 255, 255, 0.78); text-wrap: pretty; }
+
+/* WhatsApp contact link in the footer. */
+.wa-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a;
+  transition: background-color 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+.wa-link svg { color: #25d366; }
+.wa-link:hover {
+  color: #0f172a;
+  background: #ffffff;
+  border-color: rgba(37, 211, 102, 0.5);
+  transform: translateY(-1px);
+}
+
 /* hover / focus states (ported from the design's style-hover / style-focus) */
 .nav-link:hover { color: #ffffff !important; }
 .nav-ghost-btn:hover { background: rgba(255, 255, 255, 0.1) !important; }
 .btn-accent:hover { background: #1f5fd8 !important; }
 .btn-accent:focus-visible { box-shadow: 0 0 0 3px rgba(43, 114, 238, 0.5), 0 10px 15px -3px rgba(0, 0, 0, 0.35) !important; }
-.btn-dark:hover { background: #1b2740 !important; }
-.btn-dark:focus-visible { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 10px 15px -3px rgba(0, 0, 0, 0.35) !important; }
 .menu-option:hover { background: rgba(36, 86, 200, 0.06) !important; }
 .grad-btn:hover { opacity: 0.92 !important; }
 .menu-search:focus { border-color: #2456c8 !important; box-shadow: 0 0 0 3px rgba(36, 86, 200, 0.12); }
-.footer-link:hover { color: #0f172a !important; }
 
 /* Contrast pool behind the door, anchored to the door itself (not the viewport)
    so it tracks the art at every width — the hero is max-width 1200 and centred,
@@ -115,15 +192,17 @@ input, button, textarea { font-family: inherit; }
     );
   }
 
-  #what-we-offer { padding: 72px 20px !important; }
-  [data-r="offer-inner"] { height: auto !important; top: 0 !important; margin: 0 !important; }
+  [data-r="problem-inner"] { margin-bottom: 68px !important; }
+  [data-r="problem-body"] { font-size: 16px !important; }
+  #what-we-offer { padding: 68px 20px !important; }
+  [data-r="offer-inner"] { height: auto !important; top: 0 !important; margin: 0 auto !important; }
+  [data-r="offer-row"] { margin-top: 28px !important; gap: 16px !important; }
 
   #early-access { padding: 72px 20px 0 !important; min-height: 0 !important; }
   [data-r="early-inner"] { flex-direction: column !important; gap: 40px !important; padding-bottom: 56px !important; }
   [data-r="early-left"] { flex: 1 1 100% !important; max-width: 100% !important; min-width: 0 !important; }
   [data-r="early-h2"] { margin-top: 0 !important; margin-bottom: 20px !important; max-width: 100% !important; }
   [data-r="early-desc"] { margin: 0 0 28px !important; max-width: 100% !important; font-size: 17px !important; }
-  [data-r="benefits"] { margin: 32px 0 0 !important; gap: 12px !important; }
   [data-r="waitlist-col"] { flex: 1 1 100% !important; max-width: 100% !important; min-width: 0 !important; }
   [data-r="waitlist-form"] { padding: 30px 24px !important; }
   [data-r="footer-bar"] { padding: 24px 20px !important; margin-top: 40px !important; }
@@ -141,17 +220,12 @@ input, button, textarea { font-family: inherit; }
   [data-r="particles"] { --p-scale: 0.5px; }
   [data-r="early-dots"] { width: 150px !important; height: 150px !important; right: -40px !important; }
 
-  /* Artboard shows the six pillars as a 2-column grid, dividers dropped. */
-  [data-r="pillar-row"] { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 28px 12px !important; justify-content: stretch !important; }
-  [data-r="pillar-item"] { width: auto !important; }
-  [data-r="pillar-divider"] { display: none !important; }
+  [data-r="offer-eyebrow"] { font-size: 12px !important; letter-spacing: 0.14em !important; }
+  [data-r="offer-row"] { display: grid !important; grid-template-columns: 1fr !important; margin-top: 22px !important; gap: 14px !important; }
+  [data-r="problem-inner"] { margin-bottom: 52px !important; }
+  .svc-card-glass { padding: 18px 18px 22px !important; }
 
   /* Benefits stay 3-up, as drawn. */
-  [data-r="benefit-divider"] { display: none !important; }
-  [data-r="benefits"] { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 14px 6px !important; justify-content: stretch !important; }
-  [data-r="benefit-item"] { width: auto !important; padding: 0 !important; gap: 10px !important; }
-  [data-r="benefit-item"] svg { width: 32px !important; height: 32px !important; }
-  [data-r="benefit-item"] div { white-space: normal !important; width: auto !important; font-size: 14px !important; }
 
   [data-r="waitlist-form"] { padding: 24px 18px !important; border-radius: 18px !important; }
   [data-r="modal-card"] { padding: 32px 22px !important; }

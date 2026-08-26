@@ -1,3 +1,4 @@
+import { Brand } from './brand.jsx';
 import { useEffect, useRef, useState } from 'react';
 import {
   WAITLIST_ENDPOINT, COUNTRIES, SERVICES, SERVICE_ICONS,
@@ -267,10 +268,6 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
   return (
     <div data-r="waitlist-col" dir={dir} data-reveal="right" style={{ flex: '1 1 420px', minWidth: 300, maxWidth: 560, width: '100%', textAlign, opacity: 0, transform: 'translateX(28px)', transition: 'opacity 800ms cubic-bezier(0.16,1,0.3,1), transform 800ms cubic-bezier(0.16,1,0.3,1)' }}>
       <form data-r="waitlist-form" onSubmit={handleSubmit} style={{ background: '#ffffff', borderRadius: 24, padding: 40, boxShadow: '0 30px 60px -12px rgba(36, 86, 200,0.18)' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 24, fontWeight: 800, letterSpacing: '-0.01em', color: '#0f172a' }}>{t.early.formTitle}</div>
-          <div style={{ marginTop: 8, fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 500, color: '#6b7280' }}>{t.early.formSubtitle}</div>
-        </div>
 
         <label htmlFor="wj-name" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>{t.early.fullName}</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 24, background: nameVis.bg, border: nameVis.border, boxShadow: nameVis.boxShadow, borderRadius: 12, padding: '0 16px', transition: 'border-color 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out' }}>
@@ -287,7 +284,7 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
         {errEmail && <div id="wj-email-err" role="alert" style={errStyle}>{errEmail}</div>}
 
         <label htmlFor="wj-phone" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>{t.early.phone}</label>
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 10, marginTop: 12, background: phoneVis.bg, border: phoneVis.border, boxShadow: phoneVis.boxShadow, borderRadius: 12, padding: '0 16px', transition: 'border-color 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out' }}>
+        <div style={{ direction: 'ltr', position: 'relative', display: 'flex', alignItems: 'center', gap: 10, marginTop: 12, background: phoneVis.bg, border: phoneVis.border, boxShadow: phoneVis.boxShadow, borderRadius: 12, padding: '0 16px', transition: 'border-color 180ms ease-out, box-shadow 180ms ease-out, background-color 180ms ease-out' }}>
           <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke={phoneVis.icon} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'stroke 180ms ease-out' }}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
           <button type="button" ref={countryBtnRef} onClick={toggleCountryOpen} aria-haspopup="listbox" aria-expanded={countryOpen} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: "'Inter', sans-serif", fontSize: 14, color: '#0f172a', padding: '15px 10px 15px 0', borderRight: '1px solid rgba(15, 23, 42,0.12)', flex: 'none' }}>
             <span>{country.flag}</span>
@@ -340,19 +337,15 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
           {status !== 'submitting' && <span aria-hidden="true">→</span>}
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 16 }}>
-          <svg viewBox="0 0 24 24" width={13} height={13} fill="none" stroke="#9ca3af" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12.5, color: '#9ca3af' }}>{t.early.privacy}</span>
-        </div>
 
         {status === 'success' && (
           <div style={{ marginTop: 14, textAlign: 'center' }}>
             <p style={{ margin: 0, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{t.early.success}</p>
-            <p style={{ margin: '4px 0 0', fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#4a5568' }}>{t.early.successSub}</p>
+            <p style={{ margin: '4px 0 0', fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#4a5568' }}><Brand text={t.early.successSub} /></p>
           </div>
         )}
         {status === 'duplicate' && (
-          <p style={{ margin: '14px 0 0', textAlign: 'center', fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#4a5568' }}>{t.early.duplicate}</p>
+          <p style={{ margin: '14px 0 0', textAlign: 'center', fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#4a5568' }}><Brand text={t.early.duplicate} /></p>
         )}
         {submitError && (
           <p role="alert" style={{ margin: '14px 0 0', textAlign: 'center', fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#d34a3f' }}>{submitError}</p>
@@ -383,7 +376,7 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
             )}
 
             <h3 style={{ margin: '22px 0 0', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 21, fontWeight: 800, color: '#0f172a' }}>{modalTitle}</h3>
-            <p style={{ margin: '12px 0 0', fontFamily: "'Inter', sans-serif", fontSize: 14.5, lineHeight: 1.6, color: '#6b7280' }}>{modalBody}</p>
+            <p style={{ margin: '12px 0 0', fontFamily: "'Inter', sans-serif", fontSize: 14.5, lineHeight: 1.6, color: '#6b7280' }}><Brand text={modalBody} /></p>
 
             <button type="button" className="grad-btn" onClick={closeModal} style={{ width: '100%', marginTop: 26, fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#ffffff', background: 'linear-gradient(90deg, #3567d8, #2456c8)', border: 'none', borderRadius: 12, padding: '15px 0', cursor: 'pointer', transition: 'opacity 200ms ease' }}>
               {modalBtn}
