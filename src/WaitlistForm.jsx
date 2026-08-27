@@ -21,7 +21,7 @@ function ServiceIcon({ icon, color }) {
   );
 }
 
-export default function WaitlistForm({ lang, t, dir, textAlign }) {
+export default function WaitlistForm({ lang, t, dir, textAlign, onRegistered }) {
   const isAr = lang === 'ar';
 
   const [fullName, setFullName] = useState('');
@@ -229,7 +229,7 @@ export default function WaitlistForm({ lang, t, dir, textAlign }) {
           utm_campaign: payload.utmCampaign,
         };
         if (data.status === 'duplicate') { setStatus('duplicate'); setModal('duplicate'); trackEvent('waitlist_duplicate', eventParams); }
-        else if (data.status === 'success') { setStatus('success'); setModal('success'); trackEvent('waitlist_signup', eventParams); }
+        else if (data.status === 'success') { setStatus('success'); setModal('success'); if (onRegistered) onRegistered(); trackEvent('waitlist_signup', eventParams); }
         else {
           // The backend's own message never reaches the user, but without it in
           // the console a sheet/permission failure is indistinguishable from a

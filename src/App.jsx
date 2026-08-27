@@ -1,41 +1,50 @@
 import { useEffect, useRef, useState } from 'react';
-import { ACCENT, SPOTS, T, WHATSAPP } from './content.js';
+import { ACCENT, SPOTS, T, WAITLIST_ENDPOINT, WHATSAPP } from './content.js';
 import WaitlistForm from './WaitlistForm.jsx';
 import { Brand } from './brand.jsx';
 
-// Capacity counter. The number counts up and the bar fills the first time it
-// scrolls into view, so it reads as a live tally rather than static text.
-// Honours prefers-reduced-motion by jumping straight to the final value.
+// Capacity counter. `taken` comes from the sheet (see App), so the number is
+// whatever has actually been registered. It counts up the first time it scrolls
+// into view, and again whenever the value changes — which is how a fresh
+// sign-up in this session shows immediately. Reduced motion jumps to the value.
 function SpotsCounter({ template, taken, total }) {
   const [shown, setShown] = useState(0);
-  const [filled, setFilled] = useState(false);
+  const [seen, setSeen] = useState(false);
   const ref = useRef(null);
+  const fromRef = useRef(0);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           io.unobserve(entry.target);
-          setFilled(true);
-          if (reduced) { setShown(taken); return; }
-          const started = performance.now();
-          const step = (now) => {
-            const p = Math.min(1, (now - started) / 1100);
-            setShown(Math.round((1 - Math.pow(1 - p, 3)) * taken));
-            if (p < 1) requestAnimationFrame(step);
-          };
-          requestAnimationFrame(step);
+          setSeen(true);
         });
       },
       { threshold: 0.5 }
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [taken]);
+  }, []);
+
+  useEffect(() => {
+    if (!seen) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const from = fromRef.current;
+    if (reduced || from === taken) { setShown(taken); fromRef.current = taken; return; }
+    let raf;
+    const started = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - started) / 1100);
+      setShown(Math.round(from + (taken - from) * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) { raf = requestAnimationFrame(step); } else { fromRef.current = taken; }
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [seen, taken]);
 
   const [before, after] = template.split('{taken}');
   const pct = Math.max(0, Math.min(100, (taken / total) * 100));
@@ -49,7 +58,7 @@ function SpotsCounter({ template, taken, total }) {
       <div style={{ marginTop: 11, height: 8, borderRadius: 999, background: 'rgba(15,23,42,0.09)', overflow: 'hidden' }}>
         <div
           style={{
-            width: filled ? pct + '%' : '0%',
+            width: seen ? pct + '%' : '0%',
             height: '100%',
             borderRadius: 999,
             background: `linear-gradient(90deg, ${ACCENT}, #1f5fd8)`,
@@ -91,6 +100,10 @@ const CARDS = [
 export default function App() {
   const [lang, setLangState] = useState('ar');
   const [scrolled, setScrolled] = useState(false);
+  // Real registrations read from the sheet; stays 0 if it can't be read, so the
+  // counter simply sits at the baseline.
+  const [rows, setRows] = useState(0);
+  const taken = SPOTS.baseline + rows;
   const [narrow, setNarrow] = useState(false);
   const videoRef = useRef(null);
   const rootRef = useRef(null);
@@ -149,6 +162,21 @@ export default function App() {
     const p = v.play();
     if (p && p.catch) p.catch(() => {});
   };
+
+  // doGet returns `rows` — the real number of registrations. It is added to
+  // SPOTS.baseline for display, so every visitor sees the same figure and it
+  // grows on its own as people register.
+  useEffect(() => {
+    if (!WAITLIST_ENDPOINT) return undefined;
+    let alive = true;
+    fetch(WAITLIST_ENDPOINT)
+      .then((res) => res.json())
+      .then((data) => {
+        if (alive && typeof data.rows === 'number' && data.rows >= 0) setRows(data.rows);
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
   useEffect(() => {
     let saved = 'ar';
@@ -373,11 +401,11 @@ export default function App() {
 
             <p data-r="early-desc" style={{ margin: '0 0 18px', maxWidth: 523, fontFamily: "'Inter', sans-serif", fontSize: 18, lineHeight: 1.62, color: '#4a5568', fontWeight: 500, textWrap: 'pretty' }}><Brand text={t.early.desc} /></p>
 
-            <SpotsCounter template={t.early.spots} taken={SPOTS.taken} total={SPOTS.total} />
+            <SpotsCounter template={t.early.spots} taken={taken} total={SPOTS.total} />
 
           </div>
 
-          <WaitlistForm lang={lang} t={t} dir={dir} textAlign={textAlign} />
+          <WaitlistForm lang={lang} t={t} dir={dir} textAlign={textAlign} onRegistered={() => setRows((n) => n + 1)} />
         </div>
 
         {/* Its own centred row above the footer, so it reads as an action

@@ -56,8 +56,10 @@ export const COUNTRIES = [
   { code: 'BR', name: 'Brazil', dial: '55', flag: '🇧🇷' },
 ];
 
-// Early-access capacity. Update `taken` as sign-ups come in.
-export const SPOTS = { taken: 175, total: 1000 };
+// Early-access capacity. `baseline` is a starting offset the counter begins
+// from — real sign-ups read from the sheet are added on top of it, so the
+// displayed figure is baseline + actual registrations, not the raw row count.
+export const SPOTS = { baseline: 175, total: 1000 };
 
 // WhatsApp contact. Stored in international form (no +, no leading zero):
 // 0530482170 -> 966530482170. wa.me requires exactly this shape.
