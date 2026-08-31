@@ -65,6 +65,14 @@ export const SPOTS = { baseline: 175, total: 1000 };
 // 0530482170 -> 966530482170. wa.me requires exactly this shape.
 export const WHATSAPP = '966530482170';
 
+// Social profiles shown in the footer. `key` picks the icon path in App.jsx.
+export const SOCIALS = [
+  { key: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/wojod.sa/' },
+  { key: 'x', label: 'X', href: 'https://x.com/Wojod_sa' },
+  { key: 'tiktok', label: 'TikTok', href: 'https://www.tiktok.com/@wojod.sa' },
+  { key: 'linkedin', label: 'LinkedIn', href: 'https://www.linkedin.com/company/wojod-%D9%88%D8%AC%D9%88%D8%AF' },
+];
+
 export const T = {
   en: {
     errors: {

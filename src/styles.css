@@ -122,6 +122,26 @@ input, button, textarea { font-family: inherit; }
   transform: translateY(-1px);
 }
 
+/* Social icon chips in the footer bar. */
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  color: #4a5568;
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, transform 200ms ease;
+}
+.social-link:hover {
+  color: #0f172a;
+  background: #ffffff;
+  border-color: rgba(43, 114, 238, 0.5);
+  transform: translateY(-1px);
+}
+
 /* hover / focus states (ported from the design's style-hover / style-focus) */
 .nav-link:hover { color: #ffffff !important; }
 .nav-ghost-btn:hover { background: rgba(255, 255, 255, 0.1) !important; }
