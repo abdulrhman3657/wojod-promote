@@ -83,6 +83,32 @@ Mark `waitlist_signup` as a key event in GA to see it as a conversion.
 Because the page is also reachable directly at `wojod-promote.pages.dev`,
 reports may show two hostnames; filter on `www.wojod.sa` if needed.
 
+## Mixpanel
+
+Mixpanel records exactly one event, **`Join Waitlist Clicked`**, via
+[`src/mixpanel.js`](src/mixpanel.js) (the `mixpanel-browser` SDK with
+autocapture, page views and session replay switched off). It fires when a
+visitor clicks either "Join the waitlist" button; the `location` property says
+which one: `hero` (the call-to-action that scrolls to the form) or `form` (the
+form's submit button, once its fields validate, whatever the backend answers).
+Other properties are categorical only: `language`, and for the form
+`services_count` and `country`. No name, email or phone is ever sent.
+
+It is enabled only when `VITE_MIXPANEL_TOKEN` is set at build time; without it
+the site sends nothing (local dev included).
+
+1. In [Mixpanel](https://mixpanel.com) create a project with the default **US**
+   data residency (the proxy's CSP only admits the US ingestion host). Copy the
+   **Project Token** from **Settings → Project Settings → Access Keys**.
+2. Add it as the GitHub Actions secret `VITE_MIXPANEL_TOKEN` on this repo
+   (`gh secret set VITE_MIXPANEL_TOKEN`), then push or re-run the deploy
+   workflow. Locally, put it in `.env` to test.
+3. The `www.wojod.sa` proxy's Content-Security-Policy in `wujod_app`
+   (`src/lib/config/waitlist.ts`) already allows `https://api-js.mixpanel.com`
+   in `connect-src`.
+
+Visitors with "Do Not Track" enabled are not recorded (SDK default).
+
 ## Deploying
 
 **Every push to `main` deploys automatically** via GitHub Actions
@@ -96,6 +122,7 @@ Required GitHub Actions secrets (already configured on the repo):
 - `CLOUDFLARE_ACCOUNT_ID` — the Cloudflare account id
 - `VITE_WAITLIST_ENDPOINT` — the Apps Script `/exec` URL (injected at build time)
 - `VITE_GA_MEASUREMENT_ID` — Google Analytics 4 measurement id (optional; analytics off when unset)
+- `VITE_MIXPANEL_TOKEN` — Mixpanel project token (optional; Mixpanel off when unset)
 
 Manual deploy from a local machine still works too:
 

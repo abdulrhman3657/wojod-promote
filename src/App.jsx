@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ACCENT, SOCIALS, SPOTS, T, WAITLIST_ENDPOINT, WHATSAPP } from './content.js';
 import WaitlistForm from './WaitlistForm.jsx';
 import { Brand } from './brand.jsx';
+import { trackJoinWaitlistClick } from './mixpanel.js';
 
 // Brand-glyph paths (24x24, fill=currentColor) for the footer social links,
 // keyed by SOCIALS[].key in content.js.
@@ -167,6 +168,14 @@ export default function App() {
     requestAnimationFrame(settle);
   };
 
+  // The hero "Join the Waitlist" button: record the click (the page's only
+  // Mixpanel event), then scroll to the form as before.
+  const scrollToWaitlist = goToSection('early-access', { focusForm: true });
+  const joinFromHero = (event) => {
+    trackJoinWaitlistClick({ location: 'hero', language: isAr ? 'AR' : 'EN' });
+    scrollToWaitlist(event);
+  };
+
   const playVideo = () => {
     const v = videoRef.current;
     if (!v) return;
@@ -328,7 +337,7 @@ export default function App() {
             </div>
 
             <div data-r="hero-cta" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginTop: 38, animation: 'fadeSlideUp 700ms cubic-bezier(0.16,1,0.3,1) 300ms both' }}>
-              <a className="btn-accent" href="#early-access" onClick={goToSection('early-access', { focusForm: true })} aria-label={t.hero.cta1} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, fontWeight: 600, color: '#ffffff', background: ACCENT, border: 'none', borderRadius: 12, padding: '16px 28px', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.35)', transition: 'background-color 200ms ease', outline: 'none' }}>
+              <a className="btn-accent" href="#early-access" onClick={joinFromHero} aria-label={t.hero.cta1} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, fontWeight: 600, color: '#ffffff', background: ACCENT, border: 'none', borderRadius: 12, padding: '16px 28px', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.35)', transition: 'background-color 200ms ease', outline: 'none' }}>
                 {t.hero.cta1}
               </a>
             </div>

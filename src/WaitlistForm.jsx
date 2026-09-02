@@ -4,6 +4,7 @@ import {
   WAITLIST_ENDPOINT, COUNTRIES, SERVICES, SERVICE_ICONS,
 } from './content.js';
 import { trackEvent } from './analytics.js';
+import { trackJoinWaitlistClick } from './mixpanel.js';
 
 function ServiceIcon({ icon, color }) {
   return (
@@ -183,6 +184,16 @@ export default function WaitlistForm({ lang, t, dir, textAlign, onRegistered }) 
       if (el && el.focus) el.focus();
       return;
     }
+
+    // The page's only Mixpanel event: the click on "Join the waitlist" once
+    // validation lets it through, whatever the backend answers afterwards.
+    trackJoinWaitlistClick({
+      location: 'form',
+      language: isAr ? 'AR' : 'EN',
+      services_count: selectedServices.length,
+      country: country.code,
+    });
+
     setStatus('submitting');
     setSubmitError('');
 

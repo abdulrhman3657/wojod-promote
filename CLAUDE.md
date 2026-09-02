@@ -13,6 +13,7 @@ early-access waitlist form. Vite + React, static deploy on Cloudflare Pages.
   with existing rows — don't drop it from the payload. Fires `waitlist_signup` /
   `waitlist_duplicate` / `waitlist_error` GA events with categorical params only.
 - `src/analytics.js` — Google Analytics 4 loader (`initAnalytics`, `trackEvent`); active only when `VITE_GA_MEASUREMENT_ID` is set at build time. Production is served through the `www.wojod.sa` proxy in `wujod_app`, whose CSP must allow the GA hosts.
+- `src/mixpanel.js` — Mixpanel (`mixpanel-browser`, `initMixpanel`, `trackJoinWaitlistClick`); active only when `VITE_MIXPANEL_TOKEN` is set at build time. Deliberately records ONE event, `Join Waitlist Clicked`, from both "Join the waitlist" buttons (`location: 'hero' | 'form'`, plus categorical props) — autocapture, page views and session replay are off; do not add events without the owner asking. The proxy CSP must keep `https://api-js.mixpanel.com` in `connect-src` (US data residency only).
 - `src/styles.css` — keyframes, hover states, and the responsive `[data-r=...]` media-query overrides ported from the design.
 - `apps-script/Code.gs` — Google Apps Script backend (appends to Google Sheet, dedupes by email). Endpoint configured via `VITE_WAITLIST_ENDPOINT` env var.
 - `Lumina Landing Page (Standalone).html` — design export (source of truth for
